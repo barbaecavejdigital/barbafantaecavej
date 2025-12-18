@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Barba & Cavej Reward</title>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "firebase/app": "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.4.0/"
+  }
+}
+</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#F9FAFB',
+                            100: '#F3F4F6',
+                            200: '#E5E7EB',
+                            300: '#D1D5DB',
+                            400: '#9CA3AF',
+                            500: '#6B7280',
+                            600: '#4B5563',
+                            700: '#374151',
+                            800: '#1F2937',
+                            900: '#111827',
+                        },
+                        // REBRANDING: Palette personalizzata basata su #6b8992
+                        indigo: {
+                            50: '#F5F8F9',  // Sfondo chiarissimo
+                            100: '#E8EFF1', // Sfondo chiaro
+                            200: '#C8D6D9', // Bordi/Accenti leggeri
+                            300: '#9EB5BC',
+                            400: '#839FA6',
+                            500: '#6b8992', // COLORE PRINCIPALE RICHIESTO
+                            600: '#56717A', // Hover (Leggermente più scuro)
+                            700: '#435A62', // Active / Testo scuro
+                            800: '#36464D',
+                            900: '#2C383D',
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scale-in': 'scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'toast-enter': 'toast-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        'fade-in': {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        'slide-up': {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        'scale-in': {
+                            '0%': { opacity: '0', transform: 'scale(0.95)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        'toast-enter': {
+                            '0%': { opacity: '0', transform: 'translateY(-20px) scale(0.95)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background-base: #F2F2F7; /* iOS System Gray 6 */
+            --card-surface: #FFFFFF;
+            --brand-color: #6b8992;
+        }
+
+        html {
+            height: 100%;
+            overflow: hidden; /* Prevent global scroll */
+        }
+
+        body {
+            height: 100%;
+            overflow: hidden; /* Prevent global scroll */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--background-base);
+            color: #1F2937;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        button, a, input, textarea, [role="button"] {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Improved Form Inputs - More Compact */
+        .form-input {
+             appearance: none;
+             background-color: var(--card-surface);
+             border: 1px solid #E5E7EB;
+             border-radius: 0.75rem; /* Increased rounding for modern feel */
+             padding: 0.6rem 0.875rem; 
+             font-size: 0.9rem;
+             width: 100%;
+             color: #111827;
+             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+             transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6b8992;
+            box-shadow: 0 0 0 3px rgba(107, 137, 146, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        /* 
+           SMART SCROLLBARS 
+           - Visible and styled on Desktop (Mouse)
+           - Hidden but functional on Mobile/Tablet (Touch)
+        */
+        .custom-scrollbar {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+        }
+
+        /* Desktop Rule: Show custom scrollbar only when hovering capability exists */
+        @media (hover: hover) and (pointer: fine) {
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+                margin: 4px 0;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background-color: rgba(209, 213, 219, 0.6); /* Semi-transparent Slate 300 */
+                border-radius: 20px;
+                border: 2px solid transparent; /* Creates padding effect */
+                background-clip: content-box;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background-color: rgba(156, 163, 175, 0.8); /* Slate 400 */
+            }
+        }
+
+        /* Touch Device Rule: Hide scrollbar completely to mimic native app feel */
+        @media (hover: none) and (pointer: coarse) {
+            .custom-scrollbar::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera */
+            }
+            .custom-scrollbar {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+        }
+
+        /* Visual Scroll Indicators (Masks) */
+        .scroll-mask-bottom {
+            mask-image: linear-gradient(to bottom, black calc(100% - 32px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 32px), transparent 100%);
+        }
+        
+        /* Apply this to containers where you want top and bottom fade */
+        .scroll-mask-y {
+            mask-image: linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animations */
+        @keyframes modal-enter {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-modal-enter {
+            animation: modal-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes modal-exit {
+            from { opacity: 1; transform: scale(1) translateY(0); }
+            to { opacity: 0; transform: scale(0.96) translateY(8px); }
+        }
+        .animate-modal-exit {
+            animation: modal-exit 0.2s ease-in forwards;
+        }
+        
+        /* Custom Icon Animations */
+        @keyframes shake-package {
+            0% { transform: rotate(0deg); }
+            2% { transform: rotate(-10deg); }
+            4% { transform: rotate(10deg); }
+            6% { transform: rotate(-10deg); }
+            8% { transform: rotate(10deg); }
+            10% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .animate-shake-package {
+            animation: shake-package 3s ease-in-out infinite;
+            transform-origin: center bottom;
+            transform-box: fill-box;
+        }
+        
+        /* Safe Area Utilities */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div id="root" class="h-full w-full"></div>
+    <div id="modal-root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
