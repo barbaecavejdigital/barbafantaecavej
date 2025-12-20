@@ -24,7 +24,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, showToast }) => {
             <button
                 onClick={() => setActiveTab(tabName)}
                 className={`
-                    flex-none snap-center py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap
+                    flex-1 sm:flex-none py-2 px-1 sm:px-4 text-[10px] xs:text-[11px] sm:text-sm font-bold rounded-lg transition-all duration-200 whitespace-nowrap text-center
                     ${isActive
                         ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/5'
                         : 'text-slate-500 hover:text-slate-700'
@@ -81,9 +81,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, showToast }) => {
                     </div>
                 </header>
 
-                <div className="sticky top-0 z-10 pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-                    {/* Segmented Control Container */}
-                    <div className="bg-slate-200/60 p-1 rounded-xl flex space-x-1 overflow-x-auto hide-scrollbar snap-x">
+                <div className="sticky top-0 z-10 pb-1 -mx-2 px-2 sm:mx-0 sm:px-0 flex justify-center">
+                    {/* Segmented Control Container - Force single line without scroll */}
+                    <div className="bg-slate-200/60 p-1 rounded-xl flex flex-row items-center justify-between gap-0.5 sm:gap-1 sm:max-w-2xl w-full sm:w-auto">
                         {renderTabButton('customers', 'Clienti')}
                         {renderTabButton('actions', 'Azioni')}
                         {renderTabButton('heating', 'Primi Passi')}
