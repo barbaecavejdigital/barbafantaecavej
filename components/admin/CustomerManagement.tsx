@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { User, Action, Prize, PointTransaction, HeatingAction } from '../../types';
 import { getCustomersPaginated, searchCustomers, createCustomer, updateUserPoints, getActions, deleteCustomer, getPrizes, getTransactionsForUser, reverseTransaction, assignPointsToMultipleUsers, getHeatingActions, assignHeatingAction } from '../../services/dataService';
@@ -16,9 +17,7 @@ const Icons = {
     Delete: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>,
 };
 
-// ... [Keep AssignPointsModal, RedeemPrizeModal, HistoryModal as they are] ...
 const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (user: User, message: string) => void }> = ({ user, onClose, onUpdate }) => {
-    // ... [Content identical to original file] ...
     const [actions, setActions] = useState<Action[]>([]);
     const [heatingActions, setHeatingActions] = useState<HeatingAction[]>([]);
     const [activeTab, setActiveTab] = useState<'standard' | 'heating'>('standard');
@@ -53,7 +52,7 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
         setIsLoading(true);
         const updatedUser = await assignHeatingAction(user.id, action);
         if (updatedUser) {
-            onUpdate(updatedUser, `${action.points} punti di riscaldamento assegnati per "${action.name}"`);
+            onUpdate(updatedUser, `${action.points} punti Primi Passi assegnati per "${action.name}"`);
         }
         onClose();
     };
@@ -85,7 +84,7 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
             <div className="sticky top-0 bg-white z-10 pb-4 -mt-2">
                 <div className="bg-slate-100 p-1 rounded-xl mb-4 flex space-x-1">
                     {renderTabButton('standard', 'Azioni Standard')}
-                    {renderTabButton('heating', 'Riscaldamento')}
+                    {renderTabButton('heating', 'Primi Passi')}
                 </div>
                 
                 <input
@@ -117,7 +116,7 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
                 {activeTab === 'heating' && !isLoading && (
                     <>
                         <div className="bg-indigo-50/50 text-indigo-800 text-sm p-4 rounded-xl mb-4 border border-indigo-100 leading-relaxed">
-                            <p>Le azioni di riscaldamento possono essere assegnate <strong>una sola volta</strong> per cliente.</p>
+                            <p>Le azioni Primi Passi possono essere assegnate <strong>una sola volta</strong> per cliente.</p>
                         </div>
                         {filteredHeatingActions.length > 0 ? filteredHeatingActions.map(action => {
                             const isCompleted = completedHeatingIds.has(action.id);
@@ -140,7 +139,7 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
                                     </Button>
                                 </div>
                             );
-                        }) : <p className="text-center text-slate-500 py-8">Nessuna azione di riscaldamento trovata.</p>}
+                        }) : <p className="text-center text-slate-500 py-8">Nessuna azione Primi Passi trovata.</p>}
                     </>
                 )}
             </div>
@@ -149,7 +148,6 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
 };
 
 const RedeemPrizeModal: React.FC<{ user: User, onClose: () => void, onUpdate: (user: User, message: string) => void }> = ({ user, onClose, onUpdate }) => {
-    // ... [Keep implementation same]
     const [prizes, setPrizes] = useState<Prize[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -194,7 +192,6 @@ const RedeemPrizeModal: React.FC<{ user: User, onClose: () => void, onUpdate: (u
 };
 
 const HistoryModal: React.FC<{ user: User, onClose: () => void, onUpdate: (user: User, message: string) => void }> = ({ user, onClose, onUpdate }) => {
-    // ... [Keep implementation same]
     const [transactions, setTransactions] = useState<PointTransaction[]>([]);
     const [activeTab, setActiveTab] = useState<'all' | 'assigned' | 'redeemed'>('all');
     const [txToReverse, setTxToReverse] = useState<PointTransaction | null>(null);
@@ -239,7 +236,6 @@ const HistoryModal: React.FC<{ user: User, onClose: () => void, onUpdate: (user:
                  {/* Mobile Card View */}
                 <div className="md:hidden space-y-3 pb-4">
                     {txs.map(tx => {
-                        // ... logic for description ...
                          let name = tx.description;
                         let description = '-';
                         if (tx.type === 'reversal') {
@@ -346,7 +342,6 @@ const HistoryModal: React.FC<{ user: User, onClose: () => void, onUpdate: (user:
         );
     }
     
-    // ... [Render Tab Buttons and Main Modal Body same as previous]
     const renderTabButton = (tabName: 'all' | 'assigned' | 'redeemed', label: string) => {
         const isActive = activeTab === tabName;
         return (
@@ -386,7 +381,6 @@ const BulkAssignActionModal: React.FC<{
     onConfirm: (points: number, description: string) => Promise<void>;
     numSelected: number;
 }> = ({ onClose, onConfirm, numSelected }) => {
-    // ... [Keep exact logic] ...
      const [actions, setActions] = useState<Action[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAction, setSelectedAction] = useState<Action | null>(null);
@@ -411,9 +405,7 @@ const BulkAssignActionModal: React.FC<{
                 await onConfirm(selectedAction.points, description);
             } catch (error) {
                 console.error("Bulk assign error:", error);
-                // Optionally show toast error if passed as prop, or rely on parent
             } finally {
-                // Ensure we don't get stuck in loading state if there's an error handled upstream
                 setIsSubmitting(false);
             }
         }
@@ -481,7 +473,6 @@ const sortOptions: SortOption[] = [
 ];
 
 const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (message: string, type?: 'success' | 'error') => void;}> = ({ onDataChange, showToast }) => {
-    // ... [Keep state and logic exactly as is] ...
     const [customers, setCustomers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -499,11 +490,9 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
-    // Dropdown state
     const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
     const sortDropdownRef = useRef<HTMLDivElement>(null);
 
-    // Click outside handler for dropdown
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
@@ -535,10 +524,7 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
         if (!searchTerm.trim()) {
             fetchInitialCustomers(); 
         } else {
-            const reSortSearch = async () => {
-               setIsSearching(true);
-            };
-            reSortSearch();
+            setIsSearching(true);
         }
     }, [fetchInitialCustomers, sortConfig]);
 
@@ -672,7 +658,6 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
         closeModal();
     };
 
-
     const openModal = (view: 'assign' | 'redeem' | 'history' | 'delete' | 'bulkAssign', user: User | null = null) => {
         if(user) setSelectedUser(user);
         setModalView(view);
@@ -702,13 +687,11 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
     return (
         <Card className="flex flex-col h-full w-full">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-3 lg:mb-4 shrink-0 relative z-30">
-                {/* Title & Mobile Action */}
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold text-slate-900 tracking-tight">Elenco Clienti</h2>
                     <Button size="sm" onClick={handleCreateCustomerRequest} className="shadow-md lg:hidden">Nuovo</Button>
                 </div>
 
-                {/* Search, Filter & Desktop Action */}
                 <div className="flex gap-2 w-full lg:w-auto lg:flex-1 lg:justify-end items-center">
                     <div className="relative flex-grow lg:flex-grow-0 lg:w-80 xl:w-96 transition-all duration-300">
                             <input 
@@ -780,11 +763,9 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
                 </div>
             )}
 
-            {/* Main Content Area - Updated for better sticky header support */}
             <div className="flex-1 min-h-0 overflow-auto custom-scrollbar scroll-mask-bottom -mr-2 pr-2 pb-2">
                 {isLoading && customers.length === 0 ? (<p className="text-center p-12 text-slate-400">Caricamento clienti...</p>) : (
                 <>
-                    {/* MOBILE CARD VIEW - Compact */}
                     <div className="lg:hidden space-y-3 pb-6">
                         {customers.map(customer => (
                             <div key={customer.id} className={`bg-white border rounded-2xl shadow-sm overflow-hidden transition-all ${selectedCustomerIds.includes(customer.id) ? 'border-indigo-400 ring-2 ring-indigo-100' : 'border-slate-200'}`}>
@@ -806,7 +787,6 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
                                     </div>
                                 </div>
                                 
-                                {/* DEDICATED MOBILE ACTION BAR - REFINED (APPLE STYLE - MONOCHROME UNTIL ACTIVE) */}
                                 <div className="grid grid-cols-4 divide-x divide-slate-100 border-t border-slate-100 bg-slate-50/30">
                                     <button onClick={() => openModal('assign', customer)} className="flex flex-col items-center justify-center py-2.5 active:bg-slate-200 transition-colors group">
                                         {React.cloneElement(Icons.Assign as React.ReactElement<any>, { className: "w-3.5 h-3.5 text-slate-500 group-active:text-slate-900 mb-1 transition-colors" })}
@@ -832,7 +812,6 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
                         ))}
                     </div>
                 
-                    {/* DESKTOP TABLE VIEW - Updated with larger buttons and sticky header support */}
                     <div className="hidden lg:block rounded-xl border border-slate-200 overflow-visible mb-6">
                         <table className="w-full text-center text-sm">
                             <thead className="bg-slate-50 text-slate-500 font-semibold sticky top-0 z-10 shadow-sm">
@@ -886,7 +865,6 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
                 )}
             </div>
 
-            {/* Modals are unchanged in logic, just re-rendered */}
             {modalView === 'assign' && selectedUser && (
                 <Modal 
                     title={
@@ -963,7 +941,6 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
                 </Modal>
             )}
             
-            {/* ... Other modals (credentials, create) identical ... */}
             {showNewCredentials && (
                 <Modal title="Nuovo Cliente Creato" onClose={() => setShowNewCredentials(null)} size="lg">
                     <div className="text-center space-y-4 w-full">

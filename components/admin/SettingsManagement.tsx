@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Action, Prize, HeatingAction } from '../../types';
 import {
@@ -234,7 +235,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
     const handleSaveHeatingAction = async (actionData: Partial<HeatingAction>) => {
         try {
             await createOrUpdateHeatingAction(actionData);
-            showToast('Azione riscaldamento salvata.');
+            showToast('Azione Primi Passi salvata.');
             onDataChange();
             fetchData();
         } catch (error) {
@@ -329,15 +330,12 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
                             <p className="text-xs text-slate-500 truncate leading-relaxed">{action.description || 'Nessuna descrizione'}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 ml-1">
-                            {/* Points */}
                             <div className={`text-right hidden sm:block mr-1`}>
                                 <span className={`font-bold text-sm ${action.isEnabled ? 'text-indigo-600' : 'text-slate-400'}`}>+{action.points}</span>
                             </div>
                             
-                            {/* Vertical Divider */}
                             <div className="h-6 w-px bg-slate-100 mx-1 hidden sm:block"></div>
 
-                            {/* Controls */}
                             <ToggleSwitch isEnabled={action.isEnabled} onToggle={() => handleToggleAction(action)} />
                             
                             <div className="flex gap-1 ml-1">
@@ -363,7 +361,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
     const heatingSection = (
         <section>
             <div className="mb-4">
-                 <h3 className="text-lg font-bold text-slate-800 tracking-tight">Card Riscaldamento</h3>
+                 <h3 className="text-lg font-bold text-slate-800 tracking-tight">Primi Passi</h3>
                  <div className="mt-3 bg-indigo-50 text-indigo-900 text-xs p-3 rounded-xl border border-indigo-100 flex gap-3 items-start leading-relaxed">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -547,7 +545,6 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
             </div>
             
             {modals}
-
         </Card>
     );
 };

@@ -86,7 +86,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, showToast }) => {
                     <div className="bg-slate-200/60 p-1 rounded-xl flex space-x-1 overflow-x-auto hide-scrollbar snap-x">
                         {renderTabButton('customers', 'Clienti')}
                         {renderTabButton('actions', 'Azioni')}
-                        {renderTabButton('heating', 'Riscaldamento')}
+                        {renderTabButton('heating', 'Primi Passi')}
                         {renderTabButton('prizes', 'Premi')}
                         {renderTabButton('regulations', 'Regole')}
                     </div>

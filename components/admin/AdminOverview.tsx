@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { getRecentTransactions, getDashboardStats } from '../../services/dataService';
 import { PointTransaction } from '../../types';
 import Card from '../shared/Card';
@@ -10,12 +11,12 @@ interface AdminOverviewProps {
     isStickyFooter?: boolean;
 }
 
-const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, value: number | string, isLoading: boolean, variant?: 'default' | 'purple' | 'orange' }> = ({ icon, label, value, isLoading, variant = 'default' }) => (
+const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, value: number | string, isLoading: boolean, variant?: 'default' | 'emerald' | 'rose' }> = ({ icon, label, value, isLoading, variant = 'default' }) => (
     <Card className="hover:shadow-md transition-shadow duration-300 p-3">
         <div className="flex items-center gap-3">
             <div className={`p-2.5 rounded-2xl ${
-                variant === 'purple' ? 'bg-purple-50 text-purple-600' :
-                variant === 'orange' ? 'bg-orange-50 text-orange-600' :
+                variant === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
+                variant === 'rose' ? 'bg-rose-50 text-rose-600' :
                 'bg-indigo-50 text-indigo-600'
             }`}>
                 {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { className: "w-5 h-5" }) : icon}
@@ -26,8 +27,8 @@ const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, valu
                     <div className="h-6 w-16 bg-slate-100 rounded-lg animate-pulse mt-1"></div>
                 ) : (
                     <p className={`text-xl font-extrabold mt-0.5 leading-tight ${
-                        variant === 'purple' ? 'text-purple-700' :
-                        variant === 'orange' ? 'text-orange-600' :
+                        variant === 'emerald' ? 'text-emerald-700' :
+                        variant === 'rose' ? 'text-rose-600' :
                         'text-slate-800'
                     }`}>{value}</p>
                 )}
@@ -36,13 +37,11 @@ const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, valu
     </Card>
 );
 
-
-// Compact Mobile Stat Card - Redesigned to be cleaner (White BG)
-const StatCardMobile: React.FC<{ icon: React.ReactNode, value: number | string, label: string, isLoading: boolean, variant?: 'default' | 'purple' | 'orange' }> = ({ icon, value, label, isLoading, variant = 'default' }) => (
+const StatCardMobile: React.FC<{ icon: React.ReactNode, value: number | string, label: string, isLoading: boolean, variant?: 'default' | 'emerald' | 'rose' }> = ({ icon, value, label, isLoading, variant = 'default' }) => (
     <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-2 flex flex-col items-center justify-center text-center h-auto min-h-[60px] active:scale-[0.98] transition-transform">
          <div className={`p-1.5 rounded-lg mb-1 ${
-             variant === 'purple' ? 'bg-purple-50 text-purple-500' :
-             variant === 'orange' ? 'bg-orange-50 text-orange-500' :
+             variant === 'emerald' ? 'bg-emerald-50 text-emerald-500' :
+             variant === 'rose' ? 'bg-rose-50 text-rose-500' :
              'bg-indigo-50 text-indigo-500'
          }`}>
              {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { className: "w-3.5 h-3.5" }) : icon}
@@ -83,21 +82,21 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
     const [totalActionsCompleted, setTotalActionsCompleted] = useState(0);
     const [recentTransactions, setRecentTransactions] = useState<(PointTransaction & { userName: string })[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    // State specifically for the sliding panel
     const [isPanelOpen, setIsPanelOpen] = useState(false);
-    // State for desktop modal expansion
     const [isExpanded, setIsExpanded] = useState(false);
+
+    // Touch gesture logic
+    const touchStartY = useRef<number | null>(null);
+    const touchCurrentY = useRef<number | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch Stats
                 const stats = await getDashboardStats();
                 setTotalCustomers(stats.totalCustomers);
                 setTotalRedeemed(stats.totalRedeemed);
                 setTotalActionsCompleted(stats.totalActions);
 
-                // Fetch Recent Transactions
                 const recent = await getRecentTransactions(15);
                 setRecentTransactions(recent);
             } catch (error) {
@@ -109,6 +108,31 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
 
         fetchData();
     }, [refreshKey]);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        touchCurrentY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStartY.current !== null && touchCurrentY.current !== null) {
+            const deltaY = touchStartY.current - touchCurrentY.current;
+            const threshold = 50; // pixels
+
+            if (deltaY > threshold && !isPanelOpen) {
+                // Swipe up
+                setIsPanelOpen(true);
+            } else if (deltaY < -threshold && isPanelOpen) {
+                // Swipe down
+                setIsPanelOpen(false);
+            }
+        }
+        touchStartY.current = null;
+        touchCurrentY.current = null;
+    };
 
     const usersIcon = (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -128,24 +152,22 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
         </svg>
     );
 
-    // Mobile View: Horizontal compact stats
     if (show === 'stats-mobile') {
         return (
             <div className="grid grid-cols-3 gap-3 px-1">
                 <StatCardMobile icon={usersIcon} label="Clienti" value={totalCustomers} isLoading={isLoading} />
-                <StatCardMobile icon={giftIcon} label="Riscatti" value={totalRedeemed} isLoading={isLoading} variant="orange" />
+                <StatCardMobile icon={giftIcon} label="Riscatti" value={totalRedeemed} isLoading={isLoading} />
                 <StatCardMobile icon={actionIcon} label="Azioni" value={totalActionsCompleted} isLoading={isLoading} />
             </div>
         );
     }
     
-    // Desktop View: Sidebar stats
     if (show === 'stats-desktop') {
         return (
             <div className="flex flex-col gap-4 h-full">
                 <div className="grid grid-cols-1 gap-2">
                     <StatCardDesktopRect icon={usersIcon} label="Totale Clienti" value={totalCustomers} isLoading={isLoading} />
-                    <StatCardDesktopRect icon={giftIcon} label="Premi Riscattati" value={totalRedeemed} isLoading={isLoading} variant="orange" />
+                    <StatCardDesktopRect icon={giftIcon} label="Premi Riscattati" value={totalRedeemed} isLoading={isLoading} />
                     <StatCardDesktopRect icon={actionIcon} label="Azioni Totali" value={totalActionsCompleted} isLoading={isLoading} />
                 </div>
                 
@@ -153,7 +175,6 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                     <div className="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                         <div className="flex items-center gap-2">
                             <h3 className="font-bold text-sm text-slate-700">Attività Recente</h3>
-                            {/* Removed Live Badge */}
                         </div>
                         <button 
                             onClick={() => setIsExpanded(true)} 
@@ -241,85 +262,80 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
         );
     }
 
-    // Recent / Sliding Panel (Mobile & Tablet)
     if (show === 'recent') {
-        const headerHeight = 70; // Approximate height of the visible handle bar
+        const headerHeight = 60; // Slightly increased from 52 to accommodate two centered lines comfortably
 
         return (
             <>
-                {/* Backdrop - only visible when open */}
                 <div 
                     className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity duration-500 lg:hidden ${isPanelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                     onClick={() => setIsPanelOpen(false)}
                 />
 
-                {/* Sliding Panel */}
                 <div 
-                    className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[2rem] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-slate-100 transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1) lg:hidden flex flex-col"
+                    className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[2.5rem] shadow-[0_-8px_40px_rgba(0,0,0,0.15)] border-t border-slate-100 transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1) lg:hidden flex flex-col"
                     style={{ 
                         height: '75vh',
                         transform: isPanelOpen ? 'translateY(0)' : `translateY(calc(100% - ${headerHeight}px))`
                     }}
                 >
-                    {/* Handle / Header Area */}
                     <div 
                         onClick={() => setIsPanelOpen(!isPanelOpen)} 
-                        className="cursor-pointer bg-white/50 rounded-t-[2rem] pt-3 pb-4 px-6 flex-shrink-0 relative touch-pan-y"
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                        className="cursor-pointer bg-white rounded-t-[2.5rem] pt-2 pb-3 px-6 flex-shrink-0 relative touch-none select-none active:bg-slate-50 transition-colors"
                     >
-                        {/* Drag Handle Indicator */}
-                        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4" />
+                        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-2" />
                         
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-full">
-                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-slate-800 text-sm">Feed Attività</h3>
-                                    <p className="text-xs text-slate-500">{isPanelOpen ? 'Tocca per ridurre' : 'Tocca per espandere'}</p>
-                                </div>
-                            </div>
-                            
-                            {/* Expand/Collapse Chevron */}
-                            <div className={`transition-transform duration-500 text-slate-400 ${isPanelOpen ? 'rotate-180' : 'rotate-0'}`}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-                                </svg>
-                            </div>
+                        <div className="flex flex-col items-center justify-center text-center">
+                            <h3 className="font-bold text-slate-900 text-sm">Feed Attività</h3>
+                            <span className={`text-[10px] font-bold text-indigo-500/70 uppercase tracking-tight transition-opacity duration-300 ${isPanelOpen ? 'opacity-100' : 'animate-pulse'}`}>
+                                {isPanelOpen ? 'Scorri verso il basso' : 'Scorri verso l\'alto'}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Scrollable List Content */}
-                    <div className="flex-1 overflow-y-auto p-0 bg-slate-50/50 pb-safe scroll-mask-bottom">
+                    <div className="flex-1 overflow-y-auto p-0 bg-slate-50/30 pb-safe custom-scrollbar">
                          {isLoading ? (
-                            <div className="p-8 text-center"><div className="animate-spin h-8 w-8 border-2 border-indigo-500 border-t-transparent rounded-full mx-auto"></div></div>
+                            <div className="p-12 text-center">
+                                <div className="animate-spin h-10 w-10 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto shadow-sm"></div>
+                                <p className="mt-4 text-slate-400 text-sm font-medium">Caricamento...</p>
+                            </div>
                         ) : recentTransactions.length === 0 ? (
-                            <div className="text-center py-12 text-slate-400">
-                                <p>Nessuna attività recente</p>
+                            <div className="text-center py-20 text-slate-400 flex flex-col items-center gap-3">
+                                <div className="p-4 bg-white rounded-full border border-slate-100 shadow-sm text-slate-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0a9 9 0 0 1 18 0z" /></svg>
+                                </div>
+                                <p className="font-semibold text-slate-500">Nessuna attività recente</p>
                             </div>
                         ) : (
-                            <div className="relative border-l-2 border-slate-200 ml-6 my-6 space-y-8 pr-4 pb-6">
+                            <div className="relative border-l-2 border-slate-200 ml-8 my-6 space-y-8 pr-6 pb-12">
                                 {recentTransactions.map((tx) => {
                                         const { name, description } = parseTransactionDescription(tx);
                                         return (
-                                        <div key={tx.id} className="relative pl-6">
-                                            <div className={`absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-white shadow-sm ring-2 ring-slate-50 ${tx.pointsChange > 0 ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
-                                            <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                                                <div className="flex justify-between items-start mb-1">
+                                        <div key={tx.id} className="relative pl-8">
+                                            <div className={`absolute -left-[11px] top-1.5 h-5 w-5 rounded-full border-4 border-white shadow-md ring-1 ring-black/5 ${tx.pointsChange > 0 ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
+                                            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow active:scale-[0.99]">
+                                                <div className="flex justify-between items-start mb-1.5">
                                                     <div>
-                                                        <p className="font-bold text-slate-800 text-sm">{tx.userName}</p>
-                                                        <p className="text-[10px] text-slate-400">
-                                                            {new Date(tx.date).toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})} - {new Date(tx.date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                                        </p>
+                                                        <p className="font-extrabold text-slate-900 text-sm">{tx.userName}</p>
+                                                        <div className="flex items-center gap-1.5 mt-0.5">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                                                                {new Date(tx.date).toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})}
+                                                            </span>
+                                                            <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                                                                {new Date(tx.date).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' })}
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                    <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${tx.pointsChange > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                                                    <span className={`text-sm font-black px-2.5 py-1 rounded-xl shadow-sm border ${tx.pointsChange > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
                                                         {tx.pointsChange > 0 ? '+' : ''}{tx.pointsChange}
                                                     </span>
                                                 </div>
-                                                <p className="font-medium text-slate-700 text-sm break-words">{name}</p>
-                                                {description !== '-' && <p className="text-xs text-slate-500 mt-1 break-words">{description}</p>}
+                                                <p className="font-bold text-slate-700 text-sm leading-snug break-words">{name}</p>
+                                                {description !== '-' && <p className="text-xs text-slate-500 mt-1.5 leading-relaxed bg-slate-50 p-2 rounded-lg border border-slate-100/50">{description}</p>}
                                             </div>
                                         </div>
                                         );

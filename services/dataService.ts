@@ -1,3 +1,4 @@
+
 import { User, Prize, Action, PointTransaction, HeatingAction } from '../types';
 import { ADMIN_USERNAME, ADMIN_PASSWORD } from '../constants';
 import { db } from '../firebase';
@@ -66,7 +67,7 @@ export const initData = async (): Promise<void> => {
         for (let i = 1; i <= 10; i++) {
             const heatingActionDocRef = doc(heatingActionsCollection);
             const newHeatingAction: Omit<HeatingAction, 'id'> = {
-                name: `Azione Riscaldamento ${i}`,
+                name: `Primi Passi ${i}`,
                 description: `Descrizione per l'azione ${i}.`,
                 points: 10 * i,
                 slot: i,
@@ -89,7 +90,7 @@ export const initData = async (): Promise<void> => {
                 if (!existingSlots.includes(i)) {
                     const heatingActionDocRef = doc(heatingActionsCollection);
                     const newHeatingAction: Omit<HeatingAction, 'id'> = {
-                        name: `Azione Riscaldamento ${i}`,
+                        name: `Primi Passi ${i}`,
                         description: `Descrizione per l'azione ${i}.`,
                         points: 10 * i,
                         slot: i,
@@ -423,7 +424,7 @@ export const assignHeatingAction = async (userId: string, action: HeatingAction)
         userId,
         date: new Date().toISOString(),
         type: 'assignment',
-        description: `Riscaldamento: ${action.name}`,
+        description: `Primi Passi: ${action.name}`,
         pointsChange: action.points,
         balanceAfter: newPoints
     };

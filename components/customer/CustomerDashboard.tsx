@@ -20,13 +20,69 @@ const ExpandButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
     </button>
 );
 
+const PrimiPassiIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg viewBox="0 0 512 512" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.175,203.061c0,0-0.004-0.013-0.007-0.026l-0.672-1.763L13.175,203.061z"/>
+        <path d="M17.239,163.415l11.178-7.3c0.006,0,0.012-0.007,0.019-0.014L17.239,163.415z"/>
+        <path d="M480.364,260.466c-0.549-1.436-0.823-2.951-0.823-4.466c0-1.521,0.274-3.042,0.826-4.492l16.869-44.275
+            l1.586-4.172c1.74-4.564,2.582-9.324,2.582-14.006c0.006-12.986-6.458-25.516-17.835-32.953l-5.599-3.656l-37.84-24.708
+            c-2.569-1.684-4.447-4.276-5.25-7.247l-13.548-50.047c-4.675-17.23-20.28-29.075-37.978-29.075c-0.669,0-1.335,0.013-2.004,0.052
+            L329.766,44v-0.006l-0.774,0.02c-2.896,0-5.687-0.98-7.933-2.788l-37.766-30.42l-2.598-2.089
+            C273.507,2.912,264.725-0.006,256.002,0c-8.72-0.013-17.504,2.912-24.697,8.717l0.01-0.007L195.11,37.87l-4.159,3.35
+            c-2.256,1.815-5.057,2.795-7.94,2.795L182.338,44l-51.555-2.572l-0.033-0.007c-0.8-0.046-1.502-0.052-2.102-0.052
+            c-17.701,0-33.303,11.844-37.978,29.075l-13.549,50.047c-0.806,2.983-2.693,5.582-5.278,7.273l-3.732,2.436l-39.694,25.915
+            c-11.371,7.444-17.828,19.966-17.822,32.946c0,4.675,0.839,9.415,2.573,13.973l18.465,48.473l0.003,0.006
+            c0.548,1.437,0.826,2.965,0.826,4.486c0,1.522-0.274,3.043-0.826,4.48l-18.461,48.46l0.003-0.006
+            c-1.74,4.564-2.583,9.318-2.583,13.999c-0.006,12.987,6.451,25.523,17.838,32.966l32.218,21.038l11.201,7.313
+            c2.583,1.684,4.463,4.27,5.269,7.26l13.549,50.041c4.671,17.23,20.28,29.075,37.978,29.081c0.6-0.006,1.254-0.013,1.952-0.052
+            l-1.482,0.078l53.439-2.67h-0.026l0.5-0.007c2.866,0,5.658,0.98,7.91,2.795l40.371,32.522h0.003
+            c7.185,5.792,15.964,8.71,24.687,8.704c8.72,0.007,17.502-2.912,24.691-8.71l43.841-35.318l-3.467,2.795
+            c2.253-1.815,5.038-2.788,7.907-2.788l0.6,0.013l52.189,2.605l-0.262-0.012c0.568,0.026,1.186,0.039,1.855,0.045
+            c17.691-0.006,33.306-11.844,37.978-29.081l13.548-50.041c0.806-2.99,2.684-5.569,5.262-7.254l43.45-28.37
+            c11.364-7.444,17.818-19.966,17.812-32.947c0-4.682-0.842-9.442-2.586-14.012L480.364,260.466z M455.38,241.988
+            c-1.72,4.512-2.582,9.265-2.582,14.012c0,4.754,0.862,9.507,2.582,14.019l18.449,48.44l0.003,0.007
+            c0.565,1.482,0.829,2.984,0.829,4.473c-0.007,4.166-2.063,8.188-5.716,10.571l-43.41,28.344h0.003
+            c-8.086,5.275-13.95,13.346-16.474,22.67l-13.548,50.04c-1.485,5.524-6.513,9.324-12.16,9.317l-0.751-0.02l-0.189-0.006
+            l-51.474-2.566h0.036c-0.634-0.039-1.303-0.052-2.004-0.059c-8.968,0-17.685,3.069-24.694,8.717l-3.47,2.801l-36.897,29.721
+            c-2.324,1.874-5.086,2.788-7.91,2.788c-2.82,0-5.586-0.914-7.913-2.788l-40.368-32.522c-7.006-5.641-15.719-8.71-24.69-8.71
+            c-0.601,0-1.303,0.007-2.106,0.052v0.007l-51.64,2.579l0.016-0.006l-0.652,0.013c-5.642,0.006-10.676-3.794-12.161-9.317
+            l-13.548-50.04c-2.524-9.324-8.387-17.394-16.474-22.67l-32.212-21.031l-11.194-7.313c-3.65-2.377-5.713-6.405-5.72-10.578
+            c0.003-1.496,0.265-2.997,0.826-4.466l18.461-48.454l-0.003,0.007c1.72-4.518,2.582-9.265,2.582-14.019
+            c0-4.753-0.858-9.506-2.582-14.018L38.848,195.33l-0.679-1.776c-0.565-1.489-0.826-2.997-0.83-4.492
+            c0.007-4.172,2.067-8.188,5.716-10.564l43.414-28.343l0.007-0.007c8.082-5.288,13.94-13.352,16.464-22.67l13.548-50.047
+            c1.482-5.517,6.523-9.324,12.161-9.317l0.503,0.006l51.91,2.592l0.056,0.007c0.63,0.026,1.264,0.04,1.894,0.046
+            c8.968,0,17.688-3.063,24.701-8.704l40.386-32.529c2.321-1.874,5.08-2.782,7.904-2.788c2.821,0,5.583,0.914,7.907,2.788
+            l-2.602-2.096l42.979,34.618c7.022,5.654,15.752,8.704,24.707,8.704c0.666,0,1.263-0.02,1.792-0.033h-0.14l52.075-2.599h0.035
+            l0.601-0.013c5.641-0.007,10.678,3.8,12.16,9.317l13.548,50.047c2.524,9.317,8.38,17.381,16.464,22.67l49.018,32.006l-5.602-3.656
+            c3.653,2.377,5.71,6.392,5.716,10.558c0,1.496-0.264,2.998-0.832,4.492l-20.832,54.683L455.38,241.988z"/>
+        <path d="M196.151,226.298l-13.784,2.709c-0.725,0.15-1.123,0.725-0.979,1.463l10.254,52.175l-0.597,0.124
+            l-39.528-46.423c-0.653-0.757-1.45-0.986-2.305-0.816l-14.636,2.88c-0.725,0.144-1.123,0.718-0.966,1.455l15.817,80.448
+            c0.14,0.738,0.725,1.136,1.45,0.992l13.783-2.71c0.725-0.15,1.123-0.731,0.983-1.469l-10.242-52.051l0.61-0.118l39.613,46.28
+            c0.653,0.757,1.338,0.999,2.318,0.816l14.509-2.86c0.724-0.144,1.122-0.725,0.966-1.463l-15.814-80.454
+            C197.46,226.54,196.876,226.155,196.151,226.298z"/>
+        <path d="M280.868,279.649l-35.731,7.026c-0.483,0.105-0.78-0.091-0.865-0.581l-3.385-17.192
+            c-0.102-0.483,0.098-0.77,0.581-0.874l29.757-5.85c0.725-0.144,1.123-0.719,0.983-1.449l-2.546-12.922
+            c-0.144-0.724-0.728-1.123-1.453-0.986l-29.754,5.857c-0.484,0.091-0.784-0.111-0.881-0.594l-3.232-16.454
+            c-0.098-0.49,0.101-0.784,0.584-0.875l35.731-7.026c0.725-0.144,1.123-0.725,0.966-1.456l-2.56-13.038
+            c-0.144-0.738-0.725-1.13-1.453-0.986l-53.152,10.454c-0.741,0.144-1.126,0.725-0.982,1.462l15.817,80.454
+            c0.156,0.732,0.724,1.123,1.465,0.98l53.152-10.454c0.728-0.144,1.126-0.725,0.97-1.456l-2.563-13.046
+            C282.178,279.91,281.593,279.506,280.868,279.649z"/>
+        <path d="M377.221,190.694l-15.605,3.068c-0.852,0.164-1.266,0.634-1.224,1.515l-1.221,54.291l-0.258,0.046
+            l-24.847-49.16c-0.398-0.699-0.983-1.084-1.708-0.94l-10.61,2.083c-0.839,0.17-1.237,0.744-1.338,1.541l-3.911,54.82l-0.242,0.052
+            l-22.19-49.701c-0.255-0.718-0.839-1.096-1.691-0.927l-15.732,3.082c-0.852,0.17-0.996,0.706-0.725,1.417l37.266,76.23
+            c0.398,0.685,0.98,1.084,1.708,0.94l12.19-2.403c0.852-0.163,1.25-0.751,1.348-1.528l4.368-54.415l0.242-0.045l24.521,48.728
+            c0.385,0.685,0.97,1.084,1.822,0.914l12.19-2.403c0.852-0.157,1.365-0.77,1.352-1.535l5.504-84.645
+            C378.4,190.955,378.073,190.524,377.221,190.694z"/>
+    </svg>
+);
+
 const InfoPanel: React.FC<{ regulations: string, actions: Action[], onExpand?: () => void, isExpanded?: boolean }> = ({ regulations, actions, onExpand, isExpanded }) => {
     const [tab, setTab] = useState<'regulations' | 'actions'>('regulations');
 
     return (
         <div className={`bg-white rounded-[2rem] border border-slate-100 shadow-sm flex flex-col overflow-hidden h-full transition-all duration-300 hover:shadow-md ${isExpanded ? 'border-none shadow-none rounded-none' : ''}`}>
             <div className={`px-6 pt-6 pb-4 shrink-0 flex items-center justify-between bg-white z-10 ${isExpanded ? 'hidden' : ''}`}>
-                <h3 className="font-bold text-slate-800 text-lg tracking-tight">Info & Regole</h3>
+                <h3 className="font-bold text-slate-800 text-lg tracking-tight">Regole e Azioni</h3>
                 <div className="flex items-center gap-2">
                     <div className="flex bg-slate-100 p-1 rounded-xl">
                         <button 
@@ -124,9 +180,6 @@ const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean 
                 <div className={`flex justify-between items-start ${compact ? 'mb-3' : 'mb-4'}`}>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-indigo-500">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clipRule="evenodd" />
-                            </svg>
                             <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Premio più Vicino</p>
                         </div>
                         <h3 className={`${titleSize} font-extrabold leading-tight tracking-tight text-slate-800 group-hover:text-indigo-600 transition-colors`}>{nextReward.name}</h3>
@@ -204,7 +257,7 @@ const HistoryView: React.FC<{ user: User, onExpand?: () => void, isExpanded?: bo
                 <div className="text-center text-slate-400 py-12 flex flex-col items-center justify-center h-full">
                     <div className="h-12 w-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-3 border border-slate-100">
                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0a9 9 0 0118 0z" />
                        </svg>
                     </div>
                     <p className="font-medium text-xs">Nessun movimento</p>
@@ -222,7 +275,6 @@ const HistoryView: React.FC<{ user: User, onExpand?: () => void, isExpanded?: bo
                                 {new Date(tx.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </p>
                         </div>
-                        {/* UPDATE: Green for positive, Red for negative */}
                         <div className={`font-bold text-xs sm:text-sm shrink-0 px-2.5 py-1 rounded-xl ${tx.pointsChange > 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
                             {tx.pointsChange > 0 ? '+' : ''}{tx.pointsChange}
                         </div>
@@ -276,11 +328,9 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
             >
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                         <div className={`p-2 rounded-xl border shadow-sm transition-colors ${isFullyCompleted ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-indigo-50 text-indigo-600 border-indigo-100'}`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
-                        </div>
+                        <PrimiPassiIcon className={`h-8 w-8 ${isFullyCompleted ? 'text-emerald-600' : 'text-indigo-500'}`} />
                         <div>
-                            <h3 className="font-bold text-slate-800 text-sm">Bonus Benvenuto</h3>
+                            <h3 className="font-bold text-slate-800 text-sm">Primi Passi</h3>
                             <p className="text-[10px] text-slate-500 font-medium group-hover:text-indigo-600 transition-colors">Tocca per i dettagli</p>
                         </div>
                     </div>
@@ -314,13 +364,9 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
         <div className={`bg-white h-full overflow-hidden flex flex-col ${onExpand ? 'p-0' : 'p-6 border border-slate-100 rounded-[2rem] shadow-sm'}`}>
             {!onExpand && (
                  <div className="flex items-center gap-3 mb-6 shrink-0">
-                    <div className={`p-2 rounded-xl border shadow-sm ${isFullyCompleted ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-indigo-50 text-indigo-600 border-indigo-100'}`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                        </svg>
-                    </div>
+                    <PrimiPassiIcon className={`h-12 w-12 ${isFullyCompleted ? 'text-emerald-600' : 'text-indigo-500'}`} />
                     <div>
-                        <h3 className="font-bold text-slate-800 text-lg">Bonus Benvenuto</h3>
+                        <h3 className="font-bold text-slate-800 text-lg">Primi Passi</h3>
                         <p className={`text-sm font-bold uppercase tracking-wide mt-0.5 ${isFullyCompleted ? 'text-emerald-600' : 'text-indigo-600 opacity-90'}`}>
                             {isFullyCompleted ? 'Tutte le azioni completate!' : `${completed} su ${total} Completati`}
                         </p>
@@ -329,6 +375,16 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
             )}
             
             <div className="flex-1 overflow-y-auto custom-scrollbar scroll-mask-bottom">
+                {/* Disclaimer for User Experience */}
+                <div className="mb-6 bg-indigo-50/50 text-indigo-900 text-xs p-3.5 rounded-2xl border border-indigo-100 flex gap-3 items-start leading-relaxed animate-fade-in shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 a9 9 0 0118 0z" />
+                    </svg>
+                    <p className="font-medium">
+                        Benvenut* ! Le azioni in questa sezione possono essere eseguite <span className="font-bold">UNA SOLA VOLTA</span>.
+                    </p>
+                </div>
+
                 {/* 5-Column Grid Layout for Mobile (2 rows of 5 for 10 items) */}
                 <div className="grid grid-cols-5 gap-2 shrink-0 p-1">
                     {heatingActions.map((action) => {
@@ -336,7 +392,7 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
                         return (
                             <div key={action.id} className="flex flex-col items-center gap-1.5 group p-2 rounded-xl border border-slate-50 bg-slate-50/50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all duration-300">
                                 {/* Condensed size for 5-col layout */}
-                                <div className={`w-8 h-8 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border-2 transition-all duration-300 shadow-sm ${isDone ? 'bg-indigo-500 border-indigo-500 text-white shadow-indigo-200' : 'bg-white border-slate-200 text-slate-300 group-hover:border-indigo-200 group-hover:text-indigo-400'}`}>
+                                <div className={`w-8 h-8 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border-2 transition-all duration-300 shadow-sm ${isDone ? 'bg-emerald-500 border-emerald-500 text-white shadow-emerald-200' : 'bg-white border-slate-200 text-slate-300 group-hover:border-indigo-200 group-hover:text-indigo-400'}`}>
                                     {isDone ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                                     ) : (
@@ -344,31 +400,51 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
                                     )}
                                 </div>
                                 <div className="flex flex-col items-center justify-center w-full min-w-0 mt-1">
-                                    <span className={`text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ${isDone ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>+{action.points}</span>
+                                    <span className={`text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ${isDone ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>+{action.points} pt</span>
                                 </div>
                             </div>
                         );
                     })}
                 </div>
+
+                {/* SCROLL INDICATOR */}
+                <div className="flex flex-col items-center justify-center py-8 animate-pulse text-slate-400 gap-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em]">Dettagli Azioni</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 animate-bounce">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                    </svg>
+                </div>
                 
-                <div className="mt-8 pt-6 border-t border-slate-100 pb-8">
+                <div className="mt-2 pt-6 border-t border-slate-100 pb-8">
                     <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-indigo-500"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         Dettagli Azioni
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {heatingActions.map(action => (
-                            <div key={action.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-slate-100 text-slate-500 text-xs font-bold rounded-lg mt-0.5">{action.slot}</span>
-                                <div className="min-w-0 w-full">
-                                    <div className="flex justify-between items-start">
-                                        <p className="text-sm font-bold text-slate-700">{action.name}</p>
-                                        <span className="ml-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 whitespace-nowrap">+{action.points} pt</span>
+                        {heatingActions.map(action => {
+                            const isDone = completedIds.includes(action.id);
+                            return (
+                                <div key={action.id} className={`flex items-start gap-3 p-3 rounded-xl transition-all border ${isDone ? 'bg-emerald-50/30 border-emerald-100' : 'hover:bg-slate-50 border-transparent hover:border-slate-100'}`}>
+                                    <span className={`flex-shrink-0 w-6 h-6 flex items-center justify-center text-xs font-bold rounded-lg mt-0.5 ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
+                                        {isDone ? (
+                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                        ) : action.slot}
+                                    </span>
+                                    <div className="min-w-0 w-full">
+                                        <div className="flex justify-between items-start">
+                                            <p className={`text-sm font-bold ${isDone ? 'text-emerald-900' : 'text-slate-700'}`}>{action.name}</p>
+                                            <div className="flex flex-col items-end gap-1 ml-2">
+                                                <span className={`text-xs font-bold px-2 py-0.5 rounded border whitespace-nowrap ${isDone ? 'text-emerald-600 bg-white border-emerald-100' : 'text-emerald-600 bg-emerald-50 border-emerald-100'}`}>+{action.points} pt</span>
+                                                {isDone && (
+                                                    <span className="text-[9px] font-extrabold text-emerald-600 uppercase tracking-tighter">Completata</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <p className={`text-xs leading-relaxed mt-0.5 ${isDone ? 'text-emerald-700/70' : 'text-slate-500'}`}>{action.description}</p>
                                     </div>
-                                    <p className="text-xs text-slate-500 leading-relaxed mt-0.5">{action.description}</p>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>
@@ -460,7 +536,6 @@ interface CustomerDashboardProps {
 }
 
 const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
-    // ... [State setup same as before]
     const [prizes, setPrizes] = useState<Prize[]>([]);
     const [regulations, setRegulations] = useState('');
     const [heatingActions, setHeatingActions] = useState<HeatingAction[]>([]);
@@ -568,7 +643,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
             )}
 
              {expandedCard === 'rules' && (
-                <Modal title="Info & Regole" onClose={closeExpand} size="2xl">
+                <Modal title="Regole e Azioni" onClose={closeExpand} size="2xl">
                     <div className="h-[70vh]">
                         <InfoPanel regulations={regulations} actions={actions} isExpanded={true} />
                     </div>
@@ -576,18 +651,18 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
             )}
             
             {expandedCard === 'bonus' && (
-                <Modal title="Bonus Benvenuto" onClose={closeExpand} size="3xl">
+                <Modal title="Primi Passi" onClose={closeExpand} size="3xl">
                     <div className="h-[70vh]">
                         <BonusGrid user={user} heatingActions={heatingActions} />
                     </div>
                 </Modal>
             )}
 
-            {/* MOBILE LAYOUT (Tabs) - UPDATED SPACING & STRUCTURE */}
+            {/* MOBILE LAYOUT (Tabs) */}
             <div className={`md:hidden flex-1 bg-[#F2F2F7] flex flex-col overflow-hidden relative`}>
                 {activeTab === 'home' && (
                     <div className="h-full flex flex-col px-5 pt-5 pb-32 overflow-y-auto hide-scrollbar scroll-mask-bottom animate-fade-in gap-5">
-                        {/* Balance Card - No flex-1 to prevent pushing content too far */}
+                        {/* Balance Card */}
                         <div className="bg-indigo-500 rounded-[2rem] p-5 text-white shadow-xl shadow-indigo-500/30 relative overflow-hidden border border-indigo-400/50 shrink-0 min-h-[200px] flex flex-col items-center justify-center">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                             <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-900/20 rounded-full -ml-12 -mb-12 blur-xl"></div>
@@ -602,13 +677,13 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                     onClick={() => setActiveTab('history')}
                                     className="mt-1 text-[10px] font-bold text-indigo-600 bg-white px-4 py-2 rounded-full hover:bg-indigo-50 transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 a9 9 0 0 1 18 0z" /></svg>
                                     Vedi Storico
                                 </button>
                             </div>
                         </div>
 
-                        {/* Ungrouped Cards for Equidistant Spacing */}
+                        {/* Bonus Card */}
                         {heatingActions.length > 0 && (
                             (() => {
                                 const completedIds = user.completedHeatingActions || [];
@@ -624,11 +699,9 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                     >
                                         <div className="flex justify-between items-center mb-2">
                                             <div className="flex items-center gap-3">
-                                                <div className={`p-2 rounded-xl border shadow-sm transition-colors ${isBonusCompleted ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-indigo-50 text-indigo-600 border-indigo-100'}`}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
-                                                </div>
+                                                <PrimiPassiIcon className={`h-10 w-10 ${isBonusCompleted ? 'text-emerald-600' : 'text-indigo-500'}`} />
                                                 <div>
-                                                    <h3 className="font-bold text-slate-800 text-sm">Bonus Benvenuto</h3>
+                                                    <h3 className="font-bold text-slate-800 text-sm">Primi Passi</h3>
                                                     {isBonusCompleted && <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wide">Completato</p>}
                                                 </div>
                                             </div>
@@ -674,7 +747,6 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                             <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Premi Disponibili</h3>
                         </div>
                         <div className="flex-1 min-h-0">
-                            {/* Wraps PrizesList in a Card-like white container similar to HistoryView */}
                             <div className="h-full bg-white rounded-[1.75rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col p-5">
                                 <PrizesList user={user} prizes={prizes} isMobileView={true} />
                             </div>
@@ -705,7 +777,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
                             <div>
-                                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Bonus Benvenuto</h3>
+                                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Primi Passi</h3>
                                 <p className="text-sm text-slate-500 font-medium">Completa gli slot per punti extra</p>
                             </div>
                         </div>
@@ -721,7 +793,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                              <button onClick={() => setActiveTab('home')} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Regole</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Regole e Azioni</h3>
                         </div>
 
                         {/* Tab Switcher */}
@@ -825,7 +897,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                         <span className={`text-[10px] font-bold tracking-wide transition-colors mt-1 duration-300 ${activeTab === 'home' ? 'text-indigo-600' : 'text-slate-400'}`}>Home</span>
                     </button>
 
-                    {/* Right: REGOLE */}
+                    {/* Right: REGOLE E AZIONI */}
                     <button 
                         onClick={() => setActiveTab('regulations')} 
                         className="flex flex-col items-center justify-center w-16 h-full group relative"
@@ -842,7 +914,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                 <path d="m17 17.4l-1.9 1.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l1.9-1.9l-1.9-1.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l1.9 1.9l1.9-1.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7L18.4 16l1.9 1.9q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275L17 17.4Zm-.65-9.225l3.55-3.55q.3-.3.7-.287t.7.312q.275.3.275.7t-.275.7l-4.225 4.25q-.3.3-.7.3t-.7-.3l-2.15-2.15q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l1.425 1.425ZM3 15h7q.425 0 .713.288T11 16q0 .425-.288.713T10 17H3q-.425 0-.713-.288T2 16q0-.425.288-.713T3 15Zm0-8h7q.425 0 .713.288T11 8q0 .425-.288.713T10 9H3q-.425 0-.713-.288T2 8q0-.425.288-.713T3 7Z" />
                             </svg>
                         </div>
-                        <span className={`text-[10px] font-bold tracking-wide transition-colors mt-1 duration-300 ${activeTab === 'regulations' ? 'text-indigo-600' : 'text-slate-400'}`}>Regole</span>
+                        <span className={`text-[10px] font-bold tracking-wide transition-colors mt-1 duration-300 ${activeTab === 'regulations' ? 'text-indigo-600' : 'text-slate-400'}`}>Regole e Azioni</span>
                     </button>
 
                 </div>
