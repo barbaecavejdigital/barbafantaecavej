@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   username: string;
@@ -44,6 +45,7 @@ export interface PointTransaction {
   balanceAfter: number;
   isReversed?: boolean;
   reversalOf?: string; // ID of the transaction being reversed
+  performedBy?: string; // Username of the admin who performed the action
 }
 
 export interface ToastData {

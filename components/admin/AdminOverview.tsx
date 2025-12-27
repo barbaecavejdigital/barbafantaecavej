@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getRecentTransactions, getDashboardStats } from '../../services/dataService';
+import { getRecentTransactions, getDashboardStats, clearAllTransactions } from '../../services/dataService';
 import { PointTransaction } from '../../types';
 import Card from '../shared/Card';
 import Modal from '../shared/Modal';
+import Button from '../shared/Button';
 
 interface AdminOverviewProps {
     refreshKey: number;
     show?: 'stats-desktop' | 'stats-mobile' | 'recent';
     isStickyFooter?: boolean;
+    onDataChange?: () => void;
 }
 
 const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, value: number | string, isLoading: boolean, variant?: 'default' | 'emerald' | 'rose' }> = ({ icon, label, value, isLoading, variant = 'default' }) => (
@@ -76,7 +78,7 @@ const parseTransactionDescription = (tx: PointTransaction) => {
 };
 
 
-const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats-desktop', isStickyFooter = false }) => {
+const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats-desktop', isStickyFooter = false, onDataChange }) => {
     const [totalCustomers, setTotalCustomers] = useState(0);
     const [totalRedeemed, setTotalRedeemed] = useState(0);
     const [totalActionsCompleted, setTotalActionsCompleted] = useState(0);
@@ -84,28 +86,30 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
     const [isLoading, setIsLoading] = useState(true);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
+    const [isClearing, setIsClearing] = useState(false);
 
     // Touch gesture logic
     const touchStartY = useRef<number | null>(null);
     const touchCurrentY = useRef<number | null>(null);
 
+    const fetchData = async () => {
+        try {
+            const stats = await getDashboardStats();
+            setTotalCustomers(stats.totalCustomers);
+            setTotalRedeemed(stats.totalRedeemed);
+            setTotalActionsCompleted(stats.totalActions);
+
+            const recent = await getRecentTransactions(15);
+            setRecentTransactions(recent);
+        } catch (error) {
+            console.error("Failed to load dashboard data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const stats = await getDashboardStats();
-                setTotalCustomers(stats.totalCustomers);
-                setTotalRedeemed(stats.totalRedeemed);
-                setTotalActionsCompleted(stats.totalActions);
-
-                const recent = await getRecentTransactions(15);
-                setRecentTransactions(recent);
-            } catch (error) {
-                console.error("Failed to load dashboard data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         fetchData();
     }, [refreshKey]);
 
@@ -134,6 +138,20 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
         touchCurrentY.current = null;
     };
 
+    const handleClearAll = async () => {
+        setIsClearing(true);
+        try {
+            await clearAllTransactions();
+            setIsClearConfirmOpen(false);
+            await fetchData();
+            if (onDataChange) onDataChange();
+        } catch (error) {
+            console.error("Failed to clear transactions:", error);
+        } finally {
+            setIsClearing(false);
+        }
+    };
+
     const usersIcon = (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -150,6 +168,29 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9 2 2 4-4" />
         </svg>
+    );
+
+    const trashIcon = (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+        </svg>
+    );
+
+    const confirmationModal = isClearConfirmOpen && (
+        <Modal title="Svuota Attività" onClose={() => setIsClearConfirmOpen(false)} size="md">
+            <div className="space-y-4">
+                <p className="text-slate-600 leading-relaxed">
+                    Sei sicuro di voler svuotare tutta la cronologia delle attività? 
+                    Questa azione <span className="font-bold text-red-600 uppercase tracking-tight">resetterà anche le statistiche globali</span> dei riscatti e delle azioni.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-slate-100">
+                    <Button variant="secondary" onClick={() => setIsClearConfirmOpen(false)} disabled={isClearing}>Annulla</Button>
+                    <Button variant="danger" onClick={handleClearAll} disabled={isClearing}>
+                        {isClearing ? 'Svuotamento...' : 'Svuota Tutto'}
+                    </Button>
+                </div>
+            </div>
+        </Modal>
     );
 
     if (show === 'stats-mobile') {
@@ -176,15 +217,26 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                         <div className="flex items-center gap-2">
                             <h3 className="font-bold text-sm text-slate-700">Attività Recente</h3>
                         </div>
-                        <button 
-                            onClick={() => setIsExpanded(true)} 
-                            className="text-slate-400 hover:text-indigo-600 transition-colors p-1 rounded-md hover:bg-indigo-50"
-                            title="Espandi elenco"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15M3.75 20.25h4.5m-4.5 0v-4.5m0 4.5L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9" />
-                            </svg>
-                        </button>
+                        <div className="flex items-center gap-1">
+                            <button 
+                                onClick={() => setIsClearConfirmOpen(true)} 
+                                className="text-slate-400 hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50"
+                                title="Svuota Attività"
+                                disabled={recentTransactions.length === 0 || isLoading}
+                            >
+                                {trashIcon}
+                            </button>
+                            <button 
+                                onClick={() => setIsExpanded(true)} 
+                                className="text-slate-400 hover:text-indigo-600 transition-colors p-1 rounded-md hover:bg-indigo-50"
+                                title="Espandi elenco"
+                                disabled={recentTransactions.length === 0 || isLoading}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15M3.75 20.25h4.5m-4.5 0v-4.5m0 4.5L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div className="overflow-y-auto p-0 custom-scrollbar scroll-mask-bottom">
                         {isLoading ? (
@@ -199,6 +251,9 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                                         <li key={tx.id} className="p-3 hover:bg-slate-50 transition-colors">
                                             <div className="flex justify-between items-start mb-0.5">
                                                 <p className="font-bold text-xs text-slate-800 truncate max-w-[100px]" title={tx.userName}>{tx.userName}</p>
+                                                {tx.performedBy && (
+                                                    <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase">Admin: {tx.performedBy}</span>
+                                                )}
                                             </div>
                                             <p className="text-[10px] text-slate-600 truncate mb-1" title={name}>{name}</p>
                                             <div className="flex justify-end items-center gap-2 mt-1">
@@ -226,6 +281,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                                         <th className="p-3 whitespace-nowrap">Data e Ora</th>
                                         <th className="p-3 whitespace-nowrap">Utente</th>
                                         <th className="p-3">Descrizione</th>
+                                        <th className="p-3 text-right whitespace-nowrap">Admin</th>
                                         <th className="p-3 text-right whitespace-nowrap">Punti</th>
                                     </tr>
                                 </thead>
@@ -243,6 +299,11 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                                                     {description !== '-' && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
                                                 </td>
                                                 <td className="p-3 text-right">
+                                                    {tx.performedBy ? (
+                                                        <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">{tx.performedBy}</span>
+                                                    ) : <span className="text-slate-300">-</span>}
+                                                </td>
+                                                <td className="p-3 text-right">
                                                      <span className={`text-sm font-bold ${tx.pointsChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                         {tx.pointsChange > 0 ? '+' : ''}{tx.pointsChange}
                                                     </span>
@@ -258,12 +319,13 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                         </div>
                     </Modal>
                 )}
+                {confirmationModal}
             </div>
         );
     }
 
     if (show === 'recent') {
-        const headerHeight = 60; // Slightly increased from 52 to accommodate two centered lines comfortably
+        const headerHeight = 60; 
 
         return (
             <>
@@ -280,19 +342,31 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                     }}
                 >
                     <div 
-                        onClick={() => setIsPanelOpen(!isPanelOpen)} 
                         onTouchStart={handleTouchStart}
                         onTouchMove={handleTouchMove}
                         onTouchEnd={handleTouchEnd}
-                        className="cursor-pointer bg-white rounded-t-[2.5rem] pt-2 pb-3 px-6 flex-shrink-0 relative touch-none select-none active:bg-slate-50 transition-colors"
+                        className="bg-white rounded-t-[2.5rem] pt-2 pb-3 px-6 flex-shrink-0 relative touch-none select-none active:bg-slate-50 transition-colors flex flex-col items-center"
                     >
-                        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-2" />
+                        <div onClick={() => setIsPanelOpen(!isPanelOpen)} className="w-10 h-1 bg-slate-200 rounded-full mb-2 cursor-pointer" />
                         
-                        <div className="flex flex-col items-center justify-center text-center">
-                            <h3 className="font-bold text-slate-900 text-sm">Feed Attività</h3>
-                            <span className={`text-[10px] font-bold text-indigo-500/70 uppercase tracking-tight transition-opacity duration-300 ${isPanelOpen ? 'opacity-100' : 'animate-pulse'}`}>
-                                {isPanelOpen ? 'Scorri verso il basso' : 'Scorri verso l\'alto'}
-                            </span>
+                        <div className="w-full flex items-center justify-between">
+                            <div className="w-10"></div> {/* Spacer */}
+                            <div className="flex flex-col items-center justify-center text-center flex-1 cursor-pointer" onClick={() => setIsPanelOpen(!isPanelOpen)}>
+                                <h3 className="font-bold text-slate-900 text-sm">Feed Attività</h3>
+                                <span className={`text-[10px] font-bold text-indigo-500/70 uppercase tracking-tight transition-opacity duration-300 ${isPanelOpen ? 'opacity-100' : 'animate-pulse'}`}>
+                                    {isPanelOpen ? 'Scorri verso il basso' : 'Scorri verso l\'alto'}
+                                </span>
+                            </div>
+                            <div className="w-10 flex justify-end">
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); setIsClearConfirmOpen(true); }}
+                                    className="p-2 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                    title="Svuota Attività"
+                                    disabled={recentTransactions.length === 0 || isLoading}
+                                >
+                                    {trashIcon}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -319,7 +393,12 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                                             <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow active:scale-[0.99]">
                                                 <div className="flex justify-between items-start mb-1.5">
                                                     <div>
-                                                        <p className="font-extrabold text-slate-900 text-sm">{tx.userName}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="font-extrabold text-slate-900 text-sm">{tx.userName}</p>
+                                                            {tx.performedBy && (
+                                                                <span className="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">Admin: {tx.performedBy}</span>
+                                                            )}
+                                                        </div>
                                                         <div className="flex items-center gap-1.5 mt-0.5">
                                                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
                                                                 {new Date(tx.date).toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})}
@@ -344,6 +423,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
                         )}
                     </div>
                 </div>
+                {confirmationModal}
             </>
         );
     }

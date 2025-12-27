@@ -1,6 +1,6 @@
 
 import { User, Prize, Action, PointTransaction, HeatingAction } from '../types';
-import { ADMIN_USERNAME, ADMIN_PASSWORD } from '../constants';
+import { ADMIN_USERNAME, ADMIN_PASSWORD, SALONE_USERNAME, SALONE_PASSWORD } from '../constants';
 import { db } from '../firebase';
 import { 
     collection, getDocs, doc, setDoc, query, where, writeBatch,
@@ -25,34 +25,48 @@ const cleanUserForStorage = (user: User): User => {
 };
 
 export const initData = async (): Promise<void> => {
-    const q = query(usersCollection, where("role", "==", "admin"));
-    const adminSnapshot = await getDocs(q);
+    // Check for standard admins
+    const adminsToCreate = [
+        { id: 'admin-user', username: ADMIN_USERNAME, password: ADMIN_PASSWORD, firstName: 'Admin', lastName: 'User' },
+        { id: 'salone-user', username: SALONE_USERNAME, password: SALONE_PASSWORD, firstName: 'Salone', lastName: 'Admin' }
+    ];
 
-    if (adminSnapshot.empty) {
-        console.log("No admin found, initializing database...");
-        const batch = writeBatch(db);
+    const batch = writeBatch(db);
+    let needsCommit = false;
 
-        const adminUser: User = {
-            id: 'admin-user',
-            username: ADMIN_USERNAME,
-            password: ADMIN_PASSWORD,
-            firstName: 'Admin',
-            lastName: 'User',
-            points: 0,
-            isInitialLogin: false,
-            role: 'admin',
-            creationDate: new Date().toISOString()
-        };
-        const adminDocRef = doc(db, 'users', 'admin-user');
-        batch.set(adminDocRef, adminUser);
+    for (const adminData of adminsToCreate) {
+        const adminRef = doc(db, 'users', adminData.id);
+        const adminSnap = await getDoc(adminRef);
+        
+        if (!adminSnap.exists()) {
+            console.log(`Initializing admin account: ${adminData.username}`);
+            const adminUser: User = {
+                id: adminData.id,
+                username: adminData.username,
+                password: adminData.password,
+                firstName: adminData.firstName,
+                lastName: adminData.lastName,
+                points: 0,
+                isInitialLogin: false,
+                role: 'admin',
+                creationDate: new Date().toISOString()
+            };
+            batch.set(adminRef, adminUser);
+            needsCommit = true;
+        }
+    }
 
+    // Initialize prizes and actions only if no prizes exist yet (first run)
+    const prizesSnapshot = await getDocs(query(prizesCollection, limit(1)));
+    if (prizesSnapshot.empty) {
+        console.log("Initializing default prizes and actions...");
         const initialPrizes: Omit<Prize, 'id'>[] = [
             { name: 'Caffè Omaggio', description: 'Un caffè espresso offerto.', pointsRequired: 50 },
             { name: 'Sconto 10% Taglio', description: '10% di sconto sul prossimo taglio.', pointsRequired: 200 },
         ];
         initialPrizes.forEach(prize => {
             const prizeDocRef = doc(prizesCollection);
-            batch.set(prizeDocRef, prize);
+            batch.set(prizeDocRef, { ...prize, id: prizeDocRef.id });
         });
 
         const initialActions: Omit<Action, 'id' | 'isEnabled'>[] = [
@@ -61,12 +75,22 @@ export const initData = async (): Promise<void> => {
         ];
         initialActions.forEach(action => {
             const actionDocRef = doc(actionsCollection);
-            batch.set(actionDocRef, { ...action, isEnabled: true });
+            batch.set(actionDocRef, { ...action, id: actionDocRef.id, isEnabled: true });
         });
 
+        const regulationsDocRef = doc(db, 'regulations', 'main');
+        batch.set(regulationsDocRef, { text: 'Benvenuto nel nostro programma fedeltà! Accumula punti con ogni acquisto e riscatta fantastici premi.' });
+        needsCommit = true;
+    }
+
+    // Initialize heating actions
+    const heatingActionsSnapshot = await getDocs(heatingActionsCollection);
+    if (heatingActionsSnapshot.empty) {
+        console.log("Initializing heating actions...");
         for (let i = 1; i <= 10; i++) {
             const heatingActionDocRef = doc(heatingActionsCollection);
-            const newHeatingAction: Omit<HeatingAction, 'id'> = {
+            const newHeatingAction: HeatingAction = {
+                id: heatingActionDocRef.id,
                 name: `Primi Passi ${i}`,
                 description: `Descrizione per l'azione ${i}.`,
                 points: 10 * i,
@@ -74,32 +98,12 @@ export const initData = async (): Promise<void> => {
             };
             batch.set(heatingActionDocRef, newHeatingAction);
         }
+        needsCommit = true;
+    }
 
-        const regulationsDocRef = doc(db, 'regulations', 'main');
-        batch.set(regulationsDocRef, { text: 'Benvenuto nel nostro programma fedeltà! Accumula punti con ogni acquisto e riscatta fantastici premi.' });
-
+    if (needsCommit) {
         await batch.commit();
-        console.log("Database initialized successfully.");
-    } else {
-        const heatingActionsSnapshot = await getDocs(heatingActionsCollection);
-        if (heatingActionsSnapshot.docs.length < 10) {
-            console.log("Populating missing heating actions...");
-            const existingSlots = heatingActionsSnapshot.docs.map(d => d.data().slot);
-            const batch = writeBatch(db);
-            for (let i = 1; i <= 10; i++) {
-                if (!existingSlots.includes(i)) {
-                    const heatingActionDocRef = doc(heatingActionsCollection);
-                    const newHeatingAction: Omit<HeatingAction, 'id'> = {
-                        name: `Primi Passi ${i}`,
-                        description: `Descrizione per l'azione ${i}.`,
-                        points: 10 * i,
-                        slot: i,
-                    };
-                    batch.set(heatingActionDocRef, newHeatingAction);
-                }
-            }
-             await batch.commit();
-        }
+        console.log("Database successfully synchronized.");
     }
 };
 
@@ -138,7 +142,6 @@ export const login = async (username: string, password_input: string): Promise<U
     return null;
 };
 
-// NEW FUNCTION: Fetch fresh user data by ID
 export const getUserById = async (userId: string): Promise<User | null> => {
     try {
         const userDocRef = doc(db, 'users', userId);
@@ -307,8 +310,6 @@ export const searchCustomers = async (searchTerm: string): Promise<User[]> => {
 export const createCustomer = async (): Promise<User> => {
     const newId = doc(usersCollection).id;
     
-    // LOGICA "FIRST FREE SLOT"
-    // 1. Scarica tutti gli utenti per mappare gli ID occupati
     const snapshot = await getDocs(usersCollection);
     const usedNumbers = new Set<number>();
     
@@ -316,26 +317,20 @@ export const createCustomer = async (): Promise<User> => {
         const userData = docSnapshot.data() as User;
         const username = userData.username?.toUpperCase() || '';
         
-        // Verifica pattern CL + cifre (es. CL001, CL005)
         if (username.startsWith('CL')) {
-            // Rimuove 'CL' e converte il resto in numero
             const numberPart = username.replace('CL', '');
             const num = parseInt(numberPart, 10);
-            
-            // Defensiva: assicura che sia un numero valido
             if (!isNaN(num) && num > 0) {
                 usedNumbers.add(num);
             }
         }
     });
 
-    // 2. Trova il primo intero positivo non presente nel Set
     let nextNumber = 1;
     while (usedNumbers.has(nextNumber)) {
         nextNumber++;
     }
 
-    // 3. Formatta il nuovo username (es. CL002)
     const suffix = String(nextNumber).padStart(3, '0');
     const username = `CL${suffix}`;
     const password = Math.random().toString(36).slice(-8);
@@ -369,10 +364,19 @@ export const updateUser = async (user: User): Promise<User> => {
 };
 
 export const deleteCustomer = async (userId: string): Promise<void> => {
-    await deleteDoc(doc(db, 'users', userId));
+    const q = query(transactionsCollection, where("userId", "==", userId));
+    const txSnapshot = await getDocs(q);
+    const batch = writeBatch(db);
+
+    txSnapshot.docs.forEach((txDoc) => {
+        batch.delete(txDoc.ref);
+    });
+
+    batch.delete(doc(db, 'users', userId));
+    await batch.commit();
 };
 
-export const updateUserPoints = async (userId: string, pointsChange: number, description: string): Promise<User | null> => {
+export const updateUserPoints = async (userId: string, pointsChange: number, description: string, performedBy?: string): Promise<User | null> => {
     try {
         const userRef = doc(db, 'users', userId);
         const userSnap = await getDoc(userRef);
@@ -391,7 +395,8 @@ export const updateUserPoints = async (userId: string, pointsChange: number, des
             type: pointsChange > 0 ? 'assignment' : 'redemption',
             description,
             pointsChange,
-            balanceAfter: newPoints
+            balanceAfter: newPoints,
+            performedBy: performedBy
         };
         await setDoc(doc(transactionsCollection, transaction.id), transaction);
 
@@ -402,7 +407,7 @@ export const updateUserPoints = async (userId: string, pointsChange: number, des
     }
 };
 
-export const assignHeatingAction = async (userId: string, action: HeatingAction): Promise<User | null> => {
+export const assignHeatingAction = async (userId: string, action: HeatingAction, performedBy?: string): Promise<User | null> => {
     const userRef = doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
     if (!userSnap.exists()) return null;
@@ -426,22 +431,21 @@ export const assignHeatingAction = async (userId: string, action: HeatingAction)
         type: 'assignment',
         description: `Primi Passi: ${action.name}`,
         pointsChange: action.points,
-        balanceAfter: newPoints
+        balanceAfter: newPoints,
+        performedBy: performedBy
     };
     await setDoc(doc(transactionsCollection, transaction.id), transaction);
 
     return { ...userData, points: newPoints, completedHeatingActions: newCompleted, id: userId };
 }
 
-export const assignPointsToMultipleUsers = async (userIds: string[], points: number, description: string): Promise<void> => {
-    // Non usiamo batch per update di documenti diversi (utenti + transazioni) per evitare limiti di 500 writes
-    // e complessità transazionale. Loop sequenziale è accettabile per questo use case.
+export const assignPointsToMultipleUsers = async (userIds: string[], points: number, description: string, performedBy?: string): Promise<void> => {
     for (const userId of userIds) {
-        await updateUserPoints(userId, points, description); 
+        await updateUserPoints(userId, points, description, performedBy); 
     }
 };
 
-export const reverseTransaction = async (transactionId: string): Promise<User | null> => {
+export const reverseTransaction = async (transactionId: string, performedBy?: string): Promise<User | null> => {
     const txRef = doc(db, 'transactions', transactionId);
     const txSnap = await getDoc(txRef);
     
@@ -468,7 +472,8 @@ export const reverseTransaction = async (transactionId: string): Promise<User | 
         description: `Storno: ${txData.description}`,
         pointsChange: reversePoints,
         balanceAfter: newBalance,
-        reversalOf: transactionId
+        reversalOf: transactionId,
+        performedBy: performedBy
     };
     await setDoc(doc(transactionsCollection, reversalTx.id), reversalTx);
     
@@ -493,7 +498,6 @@ export const getRecentTransactions = async (limitCount: number = 20): Promise<(P
     const userIds = new Set<string>(transactions.map(t => t.userId));
     const userMap = new Map<string, string>();
     
-    // Optimization: Fetch all users in parallel instead of sequential loop
     await Promise.all(Array.from(userIds).map(async (uid) => {
         const uSnap = await getDoc(doc(db, 'users', uid));
         if (uSnap.exists()) {
@@ -508,6 +512,15 @@ export const getRecentTransactions = async (limitCount: number = 20): Promise<(P
         ...t,
         userName: userMap.get(t.userId) || 'Sconosciuto'
     }));
+};
+
+export const clearAllTransactions = async (): Promise<void> => {
+    const snapshot = await getDocs(transactionsCollection);
+    const batch = writeBatch(db);
+    snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+    });
+    await batch.commit();
 };
 
 export const getDashboardStats = async (): Promise<{ totalCustomers: number, totalRedeemed: number, totalActions: number }> => {

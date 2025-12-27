@@ -219,17 +219,20 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ user, onLogout, showToast }
                             <div className="bg-white p-1.5 rounded-xl shadow-sm border border-white/20">
                                 <Logo className="w-10 h-10" />
                             </div>
-                            <h1 className="text-lg sm:text-xl font-bold tracking-tight hidden sm:block">{APP_TITLE}</h1>
-                            <h1 className="text-lg font-bold tracking-tight sm:hidden">Admin</h1>
+                            <div className="flex flex-col">
+                                <h1 className="text-lg sm:text-xl font-bold tracking-tight hidden sm:block">{APP_TITLE}</h1>
+                                <h1 className="text-lg font-bold tracking-tight sm:hidden leading-none uppercase">Admin</h1>
+                                <p className="text-[10px] font-bold text-slate-400 sm:hidden uppercase tracking-wider mt-0.5">{user.username}</p>
+                            </div>
                         </div>
                         <div className="flex items-center space-x-3 sm:space-x-6">
                             <button onClick={() => setIsCredentialsModalOpen(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all border border-transparent hover:border-slate-700">
                                 {safeIcon} <span className="hidden md:inline">Cassaforte</span>
                             </button>
                             <div className="flex items-center gap-3 pl-3 sm:pl-6 border-l border-slate-700/50">
-                                <div className="text-right hidden sm:block">
-                                    <p className="text-sm font-semibold text-white leading-none">{user.firstName} {user.lastName}</p>
-                                    <p className="text-slate-400 text-xs mt-1 uppercase tracking-wider font-medium">{user.role}</p>
+                                <div className="text-right">
+                                    <p className="text-sm font-bold text-white leading-none hidden sm:block">{user.firstName} {user.lastName}</p>
+                                    <p className="text-slate-400 text-[10px] sm:text-xs mt-1 uppercase tracking-wider font-bold hidden sm:block">{user.username}</p>
                                 </div>
                                 <button onClick={onLogout} className="p-2 rounded-full text-slate-400 hover:bg-slate-800 hover:text-white transition-colors" title="Logout">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" /></svg>

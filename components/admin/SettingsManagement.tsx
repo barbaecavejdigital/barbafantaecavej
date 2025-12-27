@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Action, Prize, HeatingAction } from '../../types';
 import {
@@ -448,7 +447,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
                     placeholder="Inserisci qui il regolamento..."
                 />
             </div>
-            <div className="pt-4 shrink-0 bg-[#F2F2F7] lg:bg-white z-10">
+            <div className="pt-4 shrink-0 bg-white z-10">
                 <Button fullWidth onClick={handleSaveRegulations} disabled={regulations === originalRegulations}>Salva Regolamento</Button>
             </div>
         </div>

@@ -102,7 +102,6 @@ const InfoPanel: React.FC<{ regulations: string, actions: Action[], onExpand?: (
                 </div>
             </div>
 
-            {/* Expanded Header Logic handled by Modal, but internal tab switcher needed if expanded */}
             {isExpanded && (
                  <div className="px-0 pb-6 shrink-0 flex items-center justify-center bg-white z-10">
                     <div className="flex bg-slate-100 p-1 rounded-xl">
@@ -148,24 +147,36 @@ const InfoPanel: React.FC<{ regulations: string, actions: Action[], onExpand?: (
     );
 };
 
-const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean }> = ({ user, prizes, compact = false }) => {
+const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean, onClick?: () => void }> = ({ user, prizes, compact = false, onClick }) => {
     const nextReward = prizes.find(p => p.pointsRequired > user.points);
     const containerPadding = compact ? 'p-5' : 'p-6';
     const titleSize = compact ? 'text-lg' : 'text-xl';
     
     if (!nextReward) {
         return (
-            <div className={`bg-white border border-slate-100 shadow-sm ${containerPadding} rounded-[2rem] relative overflow-hidden group hover:shadow-md transition-all duration-300 shrink-0 w-full`}>
+            <div 
+                onClick={onClick}
+                className={`bg-white border border-slate-100 shadow-sm ${containerPadding} rounded-[2rem] relative overflow-hidden group hover:shadow-md transition-all duration-300 shrink-0 w-full cursor-pointer`}
+            >
                 <div className="relative z-10 flex items-center justify-between">
                     <div>
-                        <h3 className="font-bold text-lg text-slate-800">Livello Massimo!</h3>
-                        <p className="text-slate-500 text-xs mt-1 font-medium">Hai sbloccato tutti i premi.</p>
+                        <h3 className="font-bold text-lg text-slate-800">WOW! Quanti punti</h3>
+                        <p className="text-slate-500 text-xs mt-1 font-medium">Hai l'imbarazzo della scelta, corri in salone!</p>
                     </div>
-                    <div className="h-12 w-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-emerald-500">
-                            <path fillRule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h14.25c.414 0 .75-.336.75-.75a2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.22 49.22 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 0 1 3.16 5.337a45.6 45.6 0 0 1 2.006-.348Zm13.668 0c.66.11 1.325.226 1.99.348-.088 1.252-.39 2.454-.871 3.565a5.267 5.267 0 0 1-1.119-3.913ZM12 5.625c-1.63.15-3.216.437-4.75.846a5.274 5.274 0 0 0 2.41 4.192c.767.458 1.64.712 2.535.712.83 0 1.636-.217 2.355-.606a5.272 5.272 0 0 0 2.2-4.148 37.83 37.83 0 0 0-4.75-.846Z" clipRule="evenodd" />
+                    <div className="flex items-center justify-center pr-2">
+                        <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-indigo-600">
+                            <path d="M7.2998 5H22L20 12H8.37675M21 16H9L7 3H4M4 8H2M5 11H2M6 14H2M10 20C10 20.5523 9.55228 21 9 21C8.44772 21 8 20.5523 8 20C8 19.4477 8.44772 19 9 19C9.55228 19 10 19.4477 10 20ZM21 20C21 20.5523 20.5523 21 20 21C19.4477 21 19 20.5523 19 20C19 19.4477 19.4477 19 20 19C20.5523 19 21 19.4477 21 20Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </div>
+                </div>
+                {/* Visual indicator for interactive area even when complete */}
+                <div className="flex justify-center mt-3 md:hidden">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1 group-hover:text-indigo-500 transition-colors">
+                        Sfoglia Premi
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                        </svg>
+                    </span>
                 </div>
             </div>
         );
@@ -175,7 +186,10 @@ const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean 
     const progress = Math.min((user.points / nextReward.pointsRequired) * 100, 100);
 
     return (
-        <div className={`rounded-[2rem] ${containerPadding} bg-white border border-slate-100 shadow-sm relative overflow-hidden transform transition-all hover:shadow-md group shrink-0 w-full`}>
+        <div 
+            onClick={onClick}
+            className={`rounded-[2rem] ${containerPadding} bg-white border border-slate-100 shadow-sm relative overflow-hidden transform transition-all hover:shadow-md hover:-translate-y-1 group shrink-0 w-full cursor-pointer`}
+        >
             <div className="relative z-10">
                 <div className={`flex justify-between items-start ${compact ? 'mb-3' : 'mb-4'}`}>
                     <div>
@@ -187,7 +201,7 @@ const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean 
                     {!compact && (
                         <div className="h-12 w-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 ease-out">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-indigo-500">
-                                <path fillRule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                                <path fillRule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22H19.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
                             </svg>
                         </div>
                     )}
@@ -205,7 +219,6 @@ const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean 
                             className="h-full bg-indigo-500 rounded-full shadow-sm transition-all duration-1000 ease-out relative overflow-hidden" 
                             style={{ width: `${progress}%` }}
                         >
-                             <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>
                         </div>
                     </div>
                     <div className="flex justify-between items-end mt-1">
@@ -217,6 +230,16 @@ const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean 
                         </p>
                     </div>
                 </div>
+            </div>
+            
+            {/* Pulsante visuale per mobile per indicare l'interattività */}
+            <div className="flex justify-center mt-3 md:hidden">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1 group-hover:text-indigo-500 transition-colors">
+                    Sfoglia Premi
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1-1.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                    </svg>
+                </span>
             </div>
         </div>
     );
@@ -257,7 +280,7 @@ const HistoryView: React.FC<{ user: User, onExpand?: () => void, isExpanded?: bo
                 <div className="text-center text-slate-400 py-12 flex flex-col items-center justify-center h-full">
                     <div className="h-12 w-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-3 border border-slate-100">
                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0a9 9 0 0118 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0a9 9 0 0 1 18 0z" />
                        </svg>
                     </div>
                     <p className="font-medium text-xs">Nessun movimento</p>
@@ -275,7 +298,7 @@ const HistoryView: React.FC<{ user: User, onExpand?: () => void, isExpanded?: bo
                                 {new Date(tx.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </p>
                         </div>
-                        <div className={`font-bold text-xs sm:text-sm shrink-0 px-2.5 py-1 rounded-xl ${tx.pointsChange > 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                        <div className={`font-bold text-xs sm:text-sm shrink-0 px-2.5 py-1 rounded-xl ${tx.pointsChange > 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
                             {tx.pointsChange > 0 ? '+' : ''}{tx.pointsChange}
                         </div>
                     </div>
@@ -302,7 +325,6 @@ const HistoryView: React.FC<{ user: User, onExpand?: () => void, isExpanded?: bo
                     </button>
                 ))}
             </div>
-            {/* List handles its own scrolling internally */}
             <div className="flex-1 overflow-y-auto custom-scrollbar scroll-mask-bottom pr-2 -mr-2">
                 {activeTab === 'all' && renderTransactionList(allTransactions)}
                 {activeTab === 'awarded' && renderTransactionList(awardedTransactions)}
@@ -312,19 +334,19 @@ const HistoryView: React.FC<{ user: User, onExpand?: () => void, isExpanded?: bo
     );
 };
 
-const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact?: boolean, onExpand?: () => void }> = ({ user, heatingActions, compact = false, onExpand }) => {
+const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact?: boolean, onExpand?: () => void, disableAnimation?: boolean }> = ({ user, heatingActions, compact = false, onExpand, disableAnimation = false }) => {
     const completedIds = user.completedHeatingActions || [];
-    const isFullyCompleted = heatingActions.length > 0 && heatingActions.every(a => completedIds.includes(a.id));
     const total = heatingActions.length;
     const completed = completedIds.length;
+    const isFullyCompleted = total > 0 && completed === total;
+    const shouldBreathe = total > 0 && completed < total && !disableAnimation;
     const percent = total > 0 ? (completed / total) * 100 : 0;
     
-    // COMPACT VIEW (For Desktop Left Column)
     if (compact) {
         return (
             <div 
                 onClick={onExpand}
-                className={`bg-white border ${isFullyCompleted ? 'border-emerald-200 ring-1 ring-emerald-50' : 'border-slate-100'} shadow-sm p-5 rounded-[2rem] transition-all duration-300 hover:shadow-md cursor-pointer shrink-0 relative overflow-hidden group w-full`}
+                className={`bg-white border ${isFullyCompleted ? 'border-emerald-200 ring-1 ring-emerald-50' : 'border-slate-100'} ${shouldBreathe ? 'animate-breath' : ''} shadow-sm p-5 rounded-[2rem] transition-all duration-300 hover:shadow-md cursor-pointer shrink-0 relative overflow-hidden group w-full`}
             >
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -351,7 +373,6 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
                             className={`h-full rounded-full shadow-sm transition-all duration-1000 ease-out relative overflow-hidden ${isFullyCompleted ? 'bg-emerald-500' : 'bg-indigo-500'}`}
                             style={{ width: `${percent}%` }}
                         >
-                            {!isFullyCompleted && <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>}
                         </div>
                     </div>
                 </div>
@@ -359,7 +380,6 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
         );
     }
     
-    // FULL VIEW (Modal or dedicated tab)
     return (
         <div className={`bg-white h-full overflow-hidden flex flex-col ${onExpand ? 'p-0' : 'p-6 border border-slate-100 rounded-[2rem] shadow-sm'}`}>
             {!onExpand && (
@@ -375,23 +395,20 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
             )}
             
             <div className="flex-1 overflow-y-auto custom-scrollbar scroll-mask-bottom">
-                {/* Disclaimer for User Experience */}
                 <div className="mb-6 bg-indigo-50/50 text-indigo-900 text-xs p-3.5 rounded-2xl border border-indigo-100 flex gap-3 items-start leading-relaxed animate-fade-in shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 a9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 1 1-18 0 a9 9 0 0 1 18 0z" />
                     </svg>
                     <p className="font-medium">
                         Benvenut* ! Le azioni in questa sezione possono essere eseguite <span className="font-bold">UNA SOLA VOLTA</span>.
                     </p>
                 </div>
 
-                {/* 5-Column Grid Layout for Mobile (2 rows of 5 for 10 items) */}
                 <div className="grid grid-cols-5 gap-2 shrink-0 p-1">
                     {heatingActions.map((action) => {
                         const isDone = completedIds.includes(action.id);
                         return (
                             <div key={action.id} className="flex flex-col items-center gap-1.5 group p-2 rounded-xl border border-slate-50 bg-slate-50/50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all duration-300">
-                                {/* Condensed size for 5-col layout */}
                                 <div className={`w-8 h-8 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border-2 transition-all duration-300 shadow-sm ${isDone ? 'bg-emerald-500 border-emerald-500 text-white shadow-emerald-200' : 'bg-white border-slate-200 text-slate-300 group-hover:border-indigo-200 group-hover:text-indigo-400'}`}>
                                     {isDone ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
@@ -399,7 +416,7 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
                                         <span className="font-bold text-xs sm:text-lg">{action.slot}</span>
                                     )}
                                 </div>
-                                <div className="flex flex-col items-center justify-center w-full min-w-0 mt-1">
+                                <div className="flex flex-col items-center justify-center w-full min-0 mt-1">
                                     <span className={`text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ${isDone ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>+{action.points} pt</span>
                                 </div>
                             </div>
@@ -407,7 +424,6 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
                     })}
                 </div>
 
-                {/* SCROLL INDICATOR */}
                 <div className="flex flex-col items-center justify-center py-8 animate-pulse text-slate-400 gap-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-[0.15em]">Dettagli Azioni</p>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 animate-bounce">
@@ -453,7 +469,6 @@ const BonusGrid: React.FC<{ user: User, heatingActions: HeatingAction[], compact
 };
 
 const PrizesList: React.FC<{ user: User, prizes: Prize[], isMobileView?: boolean, onExpand?: () => void, isExpanded?: boolean }> = ({ user, prizes, isMobileView = false, onExpand, isExpanded }) => {
-    // Styling constants for compact mobile view
     const cardPadding = isMobileView ? 'p-3 rounded-2xl' : 'p-4 rounded-3xl';
     const iconPadding = isMobileView ? 'p-1.5 rounded-lg' : 'p-2 rounded-xl';
     const pointsSize = isMobileView ? 'text-base' : 'text-lg';
@@ -462,7 +477,6 @@ const PrizesList: React.FC<{ user: User, prizes: Prize[], isMobileView?: boolean
     const mbHeader = isMobileView ? 'mb-1' : 'mb-2';
     const mbDesc = isMobileView ? 'mb-2' : 'mb-3';
 
-    // In expanded mode, we want bigger grid columns
     const gridCols = isExpanded 
         ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3' 
         : isMobileView 
@@ -486,7 +500,7 @@ const PrizesList: React.FC<{ user: User, prizes: Prize[], isMobileView?: boolean
                 </div>
             )}
             <div className={`flex-1 overflow-y-auto custom-scrollbar scroll-mask-bottom ${isMobileView ? 'pr-2' : isExpanded ? 'py-4' : 'p-6 bg-slate-50/50'}`}>
-                <div className={`grid gap-3 ${gridCols} pb-6`}>
+                <div className={`grid gap-3 ${gridCols} pb-32`}>
                     {prizes.map(prize => {
                         const canRedeem = user.points >= prize.pointsRequired;
                         const percent = Math.min((user.points / prize.pointsRequired) * 100, 100);
@@ -543,8 +557,8 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
     const [activeTab, setActiveTab] = useState<'home' | 'prizes' | 'history' | 'bonus' | 'regulations'>('home');
     const [regulationsSubTab, setRegulationsSubTab] = useState<'regulation' | 'actions'>('regulation');
     
-    // Expanded State for Desktop
     const [expandedCard, setExpandedCard] = useState<'prizes' | 'history' | 'rules' | 'bonus' | null>(null);
+    const [isExiting, setIsExiting] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -570,17 +584,33 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
         setExpandedCard(null);
     }
 
-    // --- MAIN RENDER ---
+    const handleNavigate = (newTab: 'home' | 'prizes' | 'history' | 'bonus' | 'regulations') => {
+        setActiveTab(newTab);
+    };
+
+    const handleBack = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            setActiveTab('home');
+            setIsExiting(false);
+        }, 300);
+    };
+
+    const handleNextObjectiveClick = () => {
+        if (window.innerWidth >= 768) {
+            handleExpand('prizes');
+        } else {
+            handleNavigate('prizes');
+        }
+    };
+
     return (
         <div className="h-full flex flex-col md:overflow-hidden relative bg-[#F2F2F7]">
             
-            {/* DESKTOP/TABLET LAYOUT (Bento Grid) - FIXED HEIGHT NO SCROLL */}
             <div className="hidden md:grid h-full w-full p-4 lg:p-6 gap-4 lg:gap-6 max-w-[1920px] mx-auto overflow-hidden grid-cols-12 grid-rows-[auto_1fr] lg:grid-rows-1">
                 
-                {/* COL 1: User Stats (Left) */}
                 <div className="col-span-12 lg:col-span-3 flex flex-row lg:flex-col gap-4 h-full min-h-0 overflow-visible lg:overflow-hidden">
                     
-                     {/* Balance Card - Compact & Impactful */}
                      <div className="bg-indigo-500 rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(99,102,241,0.25)] border border-indigo-400/50 flex flex-col items-center justify-center text-center relative overflow-hidden group hover:shadow-lg transition-all duration-300 shrink-0 flex-1 lg:flex-none lg:h-48">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                         <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-900/20 rounded-full -ml-12 -mb-12 blur-xl"></div>
@@ -592,40 +622,33 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                         <span className="text-indigo-100 text-xs font-medium relative z-10">punti totali</span>
                     </div>
 
-                    {/* Bonus Grid - Compact mode (Desktop Left Column) */}
                     {heatingActions.length > 0 && (
                         <div className="flex-1 lg:flex-none">
-                           <BonusGrid user={user} heatingActions={heatingActions} compact={true} onExpand={() => handleExpand('bonus')} />
+                           <BonusGrid user={user} heatingActions={heatingActions} compact={true} onExpand={() => handleExpand('bonus')} disableAnimation={true} />
                         </div>
                     )}
 
-                    {/* Next Reward - Compact */}
                     <div className="flex-1 lg:flex-none lg:flex-1 min-h-0">
-                        <NextRewardCard user={user} prizes={prizes} compact={true} />
+                        <NextRewardCard user={user} prizes={prizes} compact={true} onClick={handleNextObjectiveClick} />
                     </div>
                 </div>
 
-                {/* COL 2: Prizes (Center) - The Main Stage */}
                 <div className="col-span-12 lg:col-span-6 flex flex-col h-full min-h-0">
                     <div className="flex-1 bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col relative">
                         <PrizesList user={user} prizes={prizes} isMobileView={false} onExpand={() => handleExpand('prizes')} />
                     </div>
                 </div>
 
-                {/* COL 3: History & Info (Right) */}
                 <div className="hidden lg:flex col-span-3 flex-col gap-4 h-full min-h-0">
-                     {/* History Section - Top Half */}
                     <div className="flex-1 min-h-0">
                         <HistoryView user={user} onExpand={() => handleExpand('history')} />
                     </div>
-                    {/* Info Section - Bottom Half */}
                     <div className="flex-1 min-h-0">
                         <InfoPanel regulations={regulations} actions={actions} onExpand={() => handleExpand('rules')} />
                     </div>
                 </div>
             </div>
 
-            {/* EXPAND MODALS (Desktop/Tablet) */}
             {expandedCard === 'prizes' && (
                 <Modal title="Catalogo Premi Completo" onClose={closeExpand} size="3xl">
                      <div className="h-[70vh]">
@@ -658,12 +681,10 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                 </Modal>
             )}
 
-            {/* MOBILE LAYOUT (Tabs) */}
             <div className={`md:hidden flex-1 bg-[#F2F2F7] flex flex-col overflow-hidden relative`}>
                 {activeTab === 'home' && (
-                    <div className="h-full flex flex-col px-5 pt-5 pb-32 overflow-y-auto hide-scrollbar scroll-mask-bottom animate-fade-in gap-5">
-                        {/* Balance Card */}
-                        <div className="bg-indigo-500 rounded-[2rem] p-5 text-white shadow-xl shadow-indigo-500/30 relative overflow-hidden border border-indigo-400/50 shrink-0 min-h-[200px] flex flex-col items-center justify-center">
+                    <div className="h-full flex flex-col px-5 pt-5 pb-32 pb-safe animate-fade-in gap-5 justify-center">
+                        <div className="bg-indigo-500 rounded-[2rem] p-5 text-white shadow-xl shadow-indigo-500/30 relative overflow-hidden border border-indigo-400/50 shrink-0 min-h-[180px] flex flex-col items-center justify-center">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                             <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-900/20 rounded-full -ml-12 -mb-12 blur-xl"></div>
                             
@@ -674,16 +695,15 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                 </h2>
                                 
                                 <button 
-                                    onClick={() => setActiveTab('history')}
+                                    onClick={() => handleNavigate('history')}
                                     className="mt-1 text-[10px] font-bold text-indigo-600 bg-white px-4 py-2 rounded-full hover:bg-indigo-50 transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 a9 9 0 0 1 18 0z" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 a9 9 0 0 1 18 0z" /></svg>
                                     Vedi Storico
                                 </button>
                             </div>
                         </div>
 
-                        {/* Bonus Card */}
                         {heatingActions.length > 0 && (
                             (() => {
                                 const completedIds = user.completedHeatingActions || [];
@@ -691,18 +711,19 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                 const completed = completedIds.length;
                                 const percent = total > 0 ? (completed / total) * 100 : 0;
                                 const isBonusCompleted = total > 0 && completed === total;
+                                const shouldBreatheBonus = total > 0 && completed < total;
 
                                 return (
                                     <div 
-                                        onClick={() => setActiveTab('bonus')} 
-                                        className={`bg-white border p-4 rounded-[2rem] shadow-sm active:scale-95 transition-transform shrink-0 w-full group cursor-pointer ${isBonusCompleted ? 'border-emerald-200 ring-1 ring-emerald-50' : 'border-slate-100 hover:shadow-md'}`}
+                                        onClick={() => handleNavigate('bonus')} 
+                                        className={`bg-white border p-4 rounded-[2rem] shadow-sm active:scale-95 transition-transform shrink-0 w-full group cursor-pointer ${isBonusCompleted ? 'border-emerald-200 ring-1 ring-emerald-50' : 'border-slate-100'} ${shouldBreatheBonus ? 'animate-breath' : ''}`}
                                     >
                                         <div className="flex justify-between items-center mb-2">
                                             <div className="flex items-center gap-3">
                                                 <PrimiPassiIcon className={`h-10 w-10 ${isBonusCompleted ? 'text-emerald-600' : 'text-indigo-500'}`} />
-                                                <div>
-                                                    <h3 className="font-bold text-slate-800 text-sm">Primi Passi</h3>
-                                                    {isBonusCompleted && <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wide">Completato</p>}
+                                                <div className="flex flex-col">
+                                                    <h3 className="font-bold text-slate-800 text-sm leading-none">Primi Passi</h3>
+                                                    {isBonusCompleted && <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wide mt-1">Completato</p>}
                                                 </div>
                                             </div>
                                             <div className="text-right">
@@ -717,14 +738,13 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                                 className={`h-full rounded-full shadow-sm transition-all duration-1000 ease-out relative overflow-hidden ${isBonusCompleted ? 'bg-emerald-500' : 'bg-indigo-500'}`}
                                                 style={{ width: `${percent}%` }}
                                             >
-                                                {!isBonusCompleted && <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>}
                                             </div>
                                         </div>
                                         
                                         <p className="text-center text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-wide group-hover:text-indigo-500 transition-colors flex items-center justify-center gap-1">
                                             Tocca per i dettagli
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-                                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1-1.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                                             </svg>
                                         </p>
                                     </div>
@@ -732,16 +752,15 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                             })()
                         )}
                         <div className="shrink-0 w-full">
-                            <NextRewardCard user={user} prizes={prizes} compact={true} />
+                            <NextRewardCard user={user} prizes={prizes} compact={true} onClick={handleNextObjectiveClick} />
                         </div>
-
                     </div>
                 )}
 
                 {activeTab === 'prizes' && (
-                    <div className="p-5 h-full flex flex-col animate-fade-in pb-36">
+                    <div className={`p-5 h-full flex flex-col pb-32 pb-safe ${isExiting ? 'animate-slide-out-left' : 'animate-fade-in'}`}>
                         <div className="flex items-center gap-3 mb-5 shrink-0">
-                            <button onClick={() => setActiveTab('home')} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                            <button onClick={handleBack} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
                             <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Premi Disponibili</h3>
@@ -755,9 +774,9 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                 )}
 
                 {activeTab === 'history' && (
-                    <div className="p-5 h-full flex flex-col animate-fade-in pb-36">
+                    <div className={`p-5 h-full flex flex-col pb-32 pb-safe ${isExiting ? 'animate-slide-out-left' : 'animate-fade-in'}`}>
                         <div className="flex items-center gap-3 mb-5 shrink-0">
-                            <button onClick={() => setActiveTab('home')} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                            <button onClick={handleBack} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
                             <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Storico Movimenti</h3>
@@ -771,9 +790,9 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                 )}
                 
                 {activeTab === 'bonus' && (
-                    <div className="p-5 h-full animate-fade-in flex flex-col">
+                    <div className={`p-5 h-full flex flex-col pb-32 pb-safe ${isExiting ? 'animate-slide-out-left' : 'animate-fade-in'}`}>
                         <div className="flex items-center gap-3 mb-6 shrink-0">
-                            <button onClick={() => setActiveTab('home')} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                            <button onClick={handleBack} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
                             <div>
@@ -781,32 +800,31 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                 <p className="text-sm text-slate-500 font-medium">Completa gli slot per punti extra</p>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto pb-28 custom-scrollbar scroll-mask-bottom">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar scroll-mask-bottom">
                              <BonusGrid user={user} heatingActions={heatingActions} />
                         </div>
                     </div>
                 )}
 
                 {activeTab === 'regulations' && (
-                    <div className="p-5 h-full flex flex-col animate-fade-in pb-36">
+                    <div className={`p-5 h-full flex flex-col pb-32 pb-safe ${isExiting ? 'animate-slide-out-left' : 'animate-fade-in'}`}>
                          <div className="flex items-center gap-3 mb-5 shrink-0">
-                             <button onClick={() => setActiveTab('home')} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                             <button onClick={handleBack} className="p-2.5 -ml-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
                             <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Regole e Azioni</h3>
                         </div>
 
-                        {/* Tab Switcher */}
                         <div className="flex p-1 bg-slate-100 rounded-xl shrink-0 mb-6 border border-slate-200/50">
                             <button
                                 onClick={() => setRegulationsSubTab('regulation')}
-                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${regulationsSubTab === 'regulation' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${regulationsSubTab === 'regulation' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 Regolamento
                             </button>
                             <button
                                 onClick={() => setRegulationsSubTab('actions')}
-                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${regulationsSubTab === 'actions' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${regulationsSubTab === 'actions' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 Azioni
                             </button>
@@ -850,13 +868,11 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                 )}
             </div>
 
-            {/* NEW MOBILE NAVIGATION - LIQUID GLASS STYLE */}
             <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 pointer-events-none flex justify-center px-4">
                 <div className="pointer-events-auto w-full max-w-[340px] bg-white/70 backdrop-blur-3xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] border border-white/60 rounded-full h-[72px] flex items-center justify-evenly px-2 ring-1 ring-black/5">
 
-                    {/* Left: PREMI */}
                     <button 
-                        onClick={() => setActiveTab('prizes')} 
+                        onClick={() => handleNavigate('prizes')} 
                         className="flex flex-col items-center justify-center w-16 h-full group relative"
                     >
                          <div className={`transition-all duration-300 ease-out ${activeTab === 'prizes' ? 'text-indigo-600 scale-125 drop-shadow-md translate-y-[-2px]' : 'text-slate-400 scale-100 hover:text-slate-500'}`}>
@@ -873,9 +889,8 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                         <span className={`text-[10px] font-bold tracking-wide transition-colors mt-1 duration-300 ${activeTab === 'prizes' ? 'text-indigo-600' : 'text-slate-400'}`}>Premi</span>
                     </button>
 
-                    {/* Center: HOME */}
                     <button 
-                        onClick={() => setActiveTab('home')} 
+                        onClick={() => handleNavigate('home')} 
                          className="flex flex-col items-center justify-center w-16 h-full group relative"
                     >
                          <div className={`transition-all duration-300 ease-out ${activeTab === 'home' ? 'text-indigo-600 scale-125 drop-shadow-md translate-y-[-2px]' : 'text-slate-400 scale-100 hover:text-slate-500'}`}>
@@ -897,9 +912,8 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                         <span className={`text-[10px] font-bold tracking-wide transition-colors mt-1 duration-300 ${activeTab === 'home' ? 'text-indigo-600' : 'text-slate-400'}`}>Home</span>
                     </button>
 
-                    {/* Right: REGOLE E AZIONI */}
                     <button 
-                        onClick={() => setActiveTab('regulations')} 
+                        onClick={() => handleNavigate('regulations')} 
                         className="flex flex-col items-center justify-center w-16 h-full group relative"
                     >
                          <div className={`transition-all duration-300 ease-out ${activeTab === 'regulations' ? 'text-indigo-600 scale-125 drop-shadow-md translate-y-[-2px]' : 'text-slate-400 scale-100 hover:text-slate-500'}`}>
@@ -911,7 +925,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                                 stroke="currentColor" 
                                 strokeWidth={activeTab === 'regulations' ? 0 : 1.5}
                             >
-                                <path d="m17 17.4l-1.9 1.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l1.9-1.9l-1.9-1.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l1.9 1.9l1.9-1.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7L18.4 16l1.9 1.9q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275L17 17.4Zm-.65-9.225l3.55-3.55q.3-.3.7-.287t.7.312q.275.3.275.7t-.275.7l-4.225 4.25q-.3.3-.7.3t-.7-.3l-2.15-2.15q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l1.425 1.425ZM3 15h7q.425 0 .713.288T11 16q0 .425-.288.713T10 17H3q-.425 0-.713-.288T2 16q0-.425.288-.713T3 15Zm0-8h7q.425 0 .713.288T11 8q0 .425-.288.713T10 9H3q-.425 0-.713-.288T2 8q0-.425.288-.713T3 7Z" />
+                                <path d="m17 17.4l-1.9 1.9q-.275.275-.7.275t-.7-.275q-.275-.275-.7-.275t.275-.7l1.9-1.9l-1.9-1.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l1.9 1.9l1.9-1.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7L18.4 16l1.9 1.9q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275L17 17.4Zm-.65-9.225l3.55-3.55q.3-.3.7-.287t.7.312q.275.3.275.7t-.275.7l-4.225 4.25q-.3.3-.7.3t-.7-.3l-2.15-2.15q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l1.425 1.425ZM3 15h7q.425 0 .713.288T11 16q0 .425-.288.713T10 17H3q-.425 0-.713-.288T2 16q0-.425.288-.713T3 15Zm0-8h7q.425 0 .713.288T11 8q0 .425-.288.713T10 9H3q-.425 0-.713-.288T2 8q0-.425.288-.713T3 7Z" />
                             </svg>
                         </div>
                         <span className={`text-[10px] font-bold tracking-wide transition-colors mt-1 duration-300 ${activeTab === 'regulations' ? 'text-indigo-600' : 'text-slate-400'}`}>Regole e Azioni</span>

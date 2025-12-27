@@ -53,7 +53,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, showToast }) => {
                         </div>
                         
                         <div className="hidden lg:block lg:col-span-1 h-full min-h-0">
-                            <AdminOverview refreshKey={refreshKey} show="stats-desktop" />
+                            <AdminOverview refreshKey={refreshKey} show="stats-desktop" onDataChange={handleDataChange} />
                         </div>
                     </div>
                 );
@@ -102,7 +102,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, showToast }) => {
 
             {/* Mobile Bottom Sliding Panel - FIXED OVERLAY */}
             <div className="lg:hidden">
-                <AdminOverview refreshKey={refreshKey} show="recent" isStickyFooter={true} />
+                <AdminOverview refreshKey={refreshKey} show="recent" isStickyFooter={true} onDataChange={handleDataChange} />
             </div>
         </div>
     );
