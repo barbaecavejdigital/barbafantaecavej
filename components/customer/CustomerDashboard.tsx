@@ -237,7 +237,7 @@ const NextRewardCard: React.FC<{ user: User, prizes: Prize[], compact?: boolean,
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1 group-hover:text-indigo-500 transition-colors">
                     Sfoglia Premi
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1-1.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                     </svg>
                 </span>
             </div>
@@ -633,13 +633,13 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user }) => {
                     </div>
                 </div>
 
-                <div className="col-span-12 lg:col-span-6 flex flex-col h-full min-h-0">
+                <div className="col-span-12 md:col-span-8 lg:col-span-6 flex flex-col h-full min-h-0">
                     <div className="flex-1 bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col relative">
                         <PrizesList user={user} prizes={prizes} isMobileView={false} onExpand={() => handleExpand('prizes')} />
                     </div>
                 </div>
 
-                <div className="hidden lg:flex col-span-3 flex-col gap-4 h-full min-h-0">
+                <div className="hidden md:flex col-span-12 md:col-span-4 lg:col-span-3 flex-col gap-4 h-full min-h-0">
                     <div className="flex-1 min-h-0">
                         <HistoryView user={user} onExpand={() => handleExpand('history')} />
                     </div>

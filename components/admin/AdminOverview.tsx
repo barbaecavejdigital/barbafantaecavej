@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { getRecentTransactions, getDashboardStats, clearAllTransactions } from '../../services/dataService';
 import { PointTransaction } from '../../types';
@@ -13,48 +12,37 @@ interface AdminOverviewProps {
     onDataChange?: () => void;
 }
 
-const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, value: number | string, isLoading: boolean, variant?: 'default' | 'emerald' | 'rose' }> = ({ icon, label, value, isLoading, variant = 'default' }) => (
+const StatCardDesktopRect: React.FC<{ icon: React.ReactNode, label: string, value: number | string, isLoading: boolean }> = ({ icon, label, value, isLoading }) => (
     <Card className="hover:shadow-md transition-shadow duration-300 p-3">
         <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-2xl ${
-                variant === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
-                variant === 'rose' ? 'bg-rose-50 text-rose-600' :
-                'bg-indigo-50 text-indigo-600'
-            }`}>
-                {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { className: "w-5 h-5" }) : icon}
+            <div className="flex items-center justify-center text-indigo-600">
+                {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { className: "w-6 h-6" }) : icon}
             </div>
             <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
                 {isLoading ? (
                     <div className="h-6 w-16 bg-slate-100 rounded-lg animate-pulse mt-1"></div>
                 ) : (
-                    <p className={`text-xl font-extrabold mt-0.5 leading-tight ${
-                        variant === 'emerald' ? 'text-emerald-700' :
-                        variant === 'rose' ? 'text-rose-600' :
-                        'text-slate-800'
-                    }`}>{value}</p>
+                    <p className="text-xl font-extrabold mt-0.5 leading-tight text-indigo-600">{value}</p>
                 )}
             </div>
         </div>
     </Card>
 );
 
-const StatCardMobile: React.FC<{ icon: React.ReactNode, value: number | string, label: string, isLoading: boolean, variant?: 'default' | 'emerald' | 'rose' }> = ({ icon, value, label, isLoading, variant = 'default' }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-2 flex flex-col items-center justify-center text-center h-auto min-h-[60px] active:scale-[0.98] transition-transform">
-         <div className={`p-1.5 rounded-lg mb-1 ${
-             variant === 'emerald' ? 'bg-emerald-50 text-emerald-500' :
-             variant === 'rose' ? 'bg-rose-50 text-rose-500' :
-             'bg-indigo-50 text-indigo-500'
-         }`}>
-             {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { className: "w-3.5 h-3.5" }) : icon}
+const StatCardMobile: React.FC<{ icon: React.ReactNode, value: number | string, label: string, isLoading: boolean }> = ({ icon, value, label, isLoading }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-1.5 flex flex-col items-center justify-center h-auto min-h-[50px] active:scale-[0.98] transition-transform">
+         <div className="flex items-center gap-1.5 mb-0.5">
+            <div className="text-indigo-500 shrink-0">
+                {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { className: "w-4 h-4" }) : icon}
+            </div>
+            {isLoading ? (
+                <div className="h-3 w-6 bg-slate-100 rounded animate-pulse"></div>
+            ) : (
+                <p className="text-sm font-extrabold text-slate-800 leading-none">{value}</p>
+            )}
         </div>
-        
-        {isLoading ? (
-            <div className="h-3 w-8 bg-slate-100 rounded animate-pulse my-0.5"></div>
-        ) : (
-             <p className="text-sm font-extrabold leading-none text-slate-800">{value}</p>
-        )}
-        <p className="text-[9px] font-bold uppercase tracking-wide truncate w-full mt-0.5 text-slate-400">{label}</p>
+        <p className="text-[8px] font-bold uppercase tracking-tight truncate w-full text-center text-slate-400 leading-none mt-0.5">{label}</p>
     </div>
 );
 
@@ -89,7 +77,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
     const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
     const [isClearing, setIsClearing] = useState(false);
 
-    // Touch gesture logic
+    // Touch logic
     const touchStartY = useRef<number | null>(null);
     const touchCurrentY = useRef<number | null>(null);
 
@@ -124,13 +112,11 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ refreshKey, show = 'stats
     const handleTouchEnd = () => {
         if (touchStartY.current !== null && touchCurrentY.current !== null) {
             const deltaY = touchStartY.current - touchCurrentY.current;
-            const threshold = 50; // pixels
+            const threshold = 50; 
 
             if (deltaY > threshold && !isPanelOpen) {
-                // Swipe up
                 setIsPanelOpen(true);
             } else if (deltaY < -threshold && isPanelOpen) {
-                // Swipe down
                 setIsPanelOpen(false);
             }
         }

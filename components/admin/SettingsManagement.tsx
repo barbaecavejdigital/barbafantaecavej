@@ -329,7 +329,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
                             <p className="text-xs text-slate-500 truncate leading-relaxed">{action.description || 'Nessuna descrizione'}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 ml-1">
-                            <div className={`text-right hidden sm:block mr-1`}>
+                            <div className={`text-right mr-1`}>
                                 <span className={`font-bold text-sm ${action.isEnabled ? 'text-indigo-600' : 'text-slate-400'}`}>+{action.points}</span>
                             </div>
                             
@@ -363,7 +363,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
                  <h3 className="text-lg font-bold text-slate-800 tracking-tight">Primi Passi</h3>
                  <div className="mt-3 bg-indigo-50 text-indigo-900 text-xs p-3 rounded-xl border border-indigo-100 flex gap-3 items-start leading-relaxed">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 1 1-18 0 a9 9 0 0 1 18 0z" />
                     </svg>
                     <p className="opacity-90">10 azioni uniche per incentivare i nuovi clienti. Non possono essere eliminate, ma solo modificate.</p>
                 </div>
@@ -379,7 +379,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
                             <p className="text-xs text-slate-500 truncate leading-relaxed">{action.description}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 ml-1">
-                             <div className="text-right hidden sm:block mr-2">
+                             <div className="text-right mr-2">
                                 <span className="font-bold text-sm text-indigo-600">+{action.points}</span>
                             </div>
                              <div className="h-6 w-px bg-slate-100 mx-1 hidden sm:block"></div>
@@ -412,7 +412,7 @@ const SettingsManagement: React.FC<SettingsManagementProps> = ({ onDataChange, s
                             <p className="text-xs text-slate-500 truncate leading-relaxed">{prize.description}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 ml-1">
-                            <div className="text-right hidden sm:block mr-2">
+                            <div className="text-right mr-2">
                                 <span className="font-bold text-sm text-indigo-600">{prize.pointsRequired} pt</span>
                             </div>
                             <div className="h-6 w-px bg-slate-100 mx-1 hidden sm:block"></div>

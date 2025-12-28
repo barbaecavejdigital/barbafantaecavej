@@ -23,6 +23,7 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
     const [activeTab, setActiveTab] = useState<'standard' | 'heating'>('standard');
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
     
     useEffect(() => {
         const fetchAllActions = async () => {
@@ -39,24 +40,30 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
     }, [user.id]);
 
     const applyStandardAction = async (action: Action) => {
-        setIsLoading(true);
-        const description = action.description ? `${action.name} (${action.description})` : action.name;
-        const currentAdmin = getCurrentUser();
-        const updatedUser = await updateUserPoints(user.id, action.points, description, currentAdmin?.username);
-        if (updatedUser) {
-            onUpdate(updatedUser, `${action.points} punti assegnati per "${action.name}"`);
+        setIsProcessing(true);
+        try {
+            const description = action.description ? `${action.name} (${action.description})` : action.name;
+            const currentAdmin = getCurrentUser();
+            const updatedUser = await updateUserPoints(user.id, action.points, description, currentAdmin?.username);
+            if (updatedUser) {
+                onUpdate(updatedUser, `${action.points} punti assegnati per "${action.name}"`);
+            }
+        } finally {
+            setIsProcessing(false);
         }
-        onClose();
     };
 
     const applyHeatingAction = async (action: HeatingAction) => {
-        setIsLoading(true);
-        const currentAdmin = getCurrentUser();
-        const updatedUser = await assignHeatingAction(user.id, action, currentAdmin?.username);
-        if (updatedUser) {
-            onUpdate(updatedUser, `${action.points} punti Primi Passi assegnati per "${action.name}"`);
+        setIsProcessing(true);
+        try {
+            const currentAdmin = getCurrentUser();
+            const updatedUser = await assignHeatingAction(user.id, action, currentAdmin?.username);
+            if (updatedUser) {
+                onUpdate(updatedUser, `${action.points} punti Primi Passi assegnati per "${action.name}"`);
+            }
+        } finally {
+            setIsProcessing(false);
         }
-        onClose();
     };
     
     const filteredStandardActions = actions.filter(action => 
@@ -99,20 +106,27 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
             </div>
             
             <div className="space-y-2 pb-4">
-                {isLoading && <p className="text-center p-4 text-slate-400">Caricamento...</p>}
+                {(isLoading || isProcessing) && (
+                    <div className="flex justify-center p-4">
+                        <svg className="animate-spin h-6 w-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
+                )}
                 
                 {activeTab === 'standard' && !isLoading && (
                     filteredStandardActions.length > 0 ? filteredStandardActions.map(action => (
-                        <div key={action.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-2xl border border-slate-100 bg-white transition-all hover:border-indigo-200 hover:shadow-sm gap-3">
-                            <div className="flex-grow min-w-0">
-                                <p className="font-bold text-slate-800 break-words">{action.name}</p>
-                                <p className="text-sm text-slate-500 break-words">{action.description || 'Nessuna descrizione'}</p>
+                        <div key={action.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 bg-white transition-all hover:border-indigo-200 hover:shadow-sm gap-3">
+                            <div className="flex-grow min-w-0 pr-2">
+                                <p className="font-bold text-slate-800 text-sm sm:text-base break-words">{action.name}</p>
+                                <p className="text-xs text-slate-500 break-words">{action.description || 'Nessuna descrizione'}</p>
                             </div>
-                            <Button size="sm" onClick={() => applyStandardAction(action)} disabled={isLoading} className="shrink-0 w-full sm:w-auto">
-                               + {action.points} Punti
-                            </Button>
+                            <div className="flex items-center gap-3 shrink-0">
+                                <span className="font-extrabold text-indigo-600 text-base sm:text-lg">+{action.points}</span>
+                                <Button size="sm" onClick={() => applyStandardAction(action)} disabled={isProcessing} className="!py-1.5 !px-3 shadow-none">
+                                    Assegna
+                                </Button>
+                            </div>
                         </div>
-                    )) : <p className="text-center text-slate-500 py-8">Nessuna azione trovata.</p>
+                    )) : !isLoading && <p className="text-center text-slate-500 py-8">Nessuna azione trovata.</p>
                 )}
 
                 {activeTab === 'heating' && !isLoading && (
@@ -125,23 +139,26 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
                              return (
                                 <div 
                                     key={action.id} 
-                                    className={`relative flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-2xl border transition-all gap-3 ${isCompleted ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-sm'}`}
+                                    className={`relative flex justify-between items-center p-4 rounded-2xl border transition-all gap-3 ${isCompleted ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-sm'}`}
                                 >
-                                    <div className="flex items-start gap-3 min-w-0">
+                                    <div className="flex items-start gap-3 min-w-0 flex-1">
                                         <div className={`shrink-0 w-6 h-6 flex items-center justify-center font-bold rounded-full text-xs border-2 border-white shadow-sm ${isCompleted ? 'bg-slate-200 text-slate-500' : 'bg-indigo-100 text-indigo-600'}`}>
                                             {action.slot}
                                         </div>
-                                        <div>
-                                            <p className={`font-bold break-words ${isCompleted ? 'text-slate-500' : 'text-slate-800'}`}>{action.name}</p>
-                                            <p className="text-sm text-slate-500 break-words">{action.description || 'Azione unica'}</p>
+                                        <div className="min-w-0">
+                                            <p className={`font-bold break-words text-sm sm:text-base ${isCompleted ? 'text-slate-500' : 'text-slate-800'}`}>{action.name}</p>
+                                            <p className="text-xs text-slate-500 break-words">{action.description || 'Azione unica'}</p>
                                         </div>
                                     </div>
-                                    <Button size="sm" onClick={() => applyHeatingAction(action)} disabled={isLoading || isCompleted} className="w-full sm:w-auto shrink-0" variant={isCompleted ? "secondary" : "primary"}>
-                                       {isCompleted ? 'Assegnata' : `+ ${action.points} Punti`}
-                                    </Button>
+                                    <div className="flex items-center gap-3 shrink-0">
+                                        <span className={`font-extrabold text-base sm:text-lg ${isCompleted ? 'text-slate-300' : 'text-indigo-600'}`}>+{action.points}</span>
+                                        <Button size="sm" onClick={() => applyHeatingAction(action)} disabled={isProcessing || isCompleted} className="!py-1.5 !px-3 shadow-none" variant={isCompleted ? "secondary" : "primary"}>
+                                            {isCompleted ? 'Fatto' : 'Assegna'}
+                                        </Button>
+                                    </div>
                                 </div>
                             );
-                        }) : <p className="text-center text-slate-500 py-8">Nessuna azione Primi Passi trovata.</p>}
+                        }) : !isLoading && <p className="text-center text-slate-500 py-8">Nessuna azione Primi Passi trovata.</p>}
                     </>
                 )}
             </div>
@@ -152,6 +169,7 @@ const AssignPointsModal: React.FC<{ user: User, onClose: () => void, onUpdate: (
 const RedeemPrizeModal: React.FC<{ user: User, onClose: () => void, onUpdate: (user: User, message: string) => void }> = ({ user, onClose, onUpdate }) => {
     const [prizes, setPrizes] = useState<Prize[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const fetchPrizes = async () => {
@@ -162,30 +180,43 @@ const RedeemPrizeModal: React.FC<{ user: User, onClose: () => void, onUpdate: (u
     }, []);
 
     const handleRedeem = async (prize: Prize) => {
-        setIsLoading(true);
-        const description = `Riscatto: ${prize.name} (${prize.description})`;
-        const currentAdmin = getCurrentUser();
-        const updatedUser = await updateUserPoints(user.id, -prize.pointsRequired, description, currentAdmin?.username);
-        if(updatedUser) {
-            onUpdate(updatedUser, `Premio "${prize.name}" riscattato con successo!`);
+        setIsProcessing(true);
+        try {
+            const description = `Riscatto: ${prize.name} (${prize.description})`;
+            const currentAdmin = getCurrentUser();
+            const updatedUser = await updateUserPoints(user.id, -prize.pointsRequired, description, currentAdmin?.username);
+            if(updatedUser) {
+                onUpdate(updatedUser, `Premio "${prize.name}" riscattato con successo!`);
+            }
+        } finally {
+            setIsProcessing(false);
         }
-        onClose();
     };
 
     return (
         <div className="text-gray-700 w-full">
             <div className="space-y-2 pb-4">
-                {isLoading ? <p className="text-center p-4 text-slate-400">Caricamento...</p> : prizes.map(prize => {
+                {(isLoading || isProcessing) && (
+                    <div className="flex justify-center p-4">
+                        <svg className="animate-spin h-6 w-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
+                )}
+                {!isLoading && prizes.map(prize => {
                     const canRedeem = user.points >= prize.pointsRequired;
                     return (
-                        <div key={prize.id} className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-2xl border transition-all gap-3 ${canRedeem ? 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-sm' : 'bg-slate-50 opacity-60 border-slate-200'}`}>
-                            <div className="min-w-0">
-                                <p className="font-bold text-slate-800 break-words">{prize.name}</p>
-                                <p className="text-sm text-slate-500 break-words">{prize.pointsRequired} punti</p>
+                        <div key={prize.id} className={`flex justify-between items-center p-4 rounded-2xl border transition-all gap-3 ${canRedeem ? 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-sm' : 'bg-slate-50 opacity-60 border-slate-200'}`}>
+                            <div className="min-w-0 flex-1">
+                                <p className="font-bold text-slate-800 text-sm sm:text-base break-words">{prize.name}</p>
+                                {prize.description && (
+                                    <p className="text-[11px] text-slate-400 leading-relaxed break-words line-clamp-2">{prize.description}</p>
+                                )}
                             </div>
-                            <Button size="sm" onClick={() => handleRedeem(prize)} disabled={!canRedeem || isLoading} className="w-full sm:w-auto shrink-0">
-                                Riscatta
-                            </Button>
+                            <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                <span className={`font-extrabold text-sm sm:text-base ${canRedeem ? 'text-indigo-600' : 'text-slate-300'}`}>{prize.pointsRequired} pt</span>
+                                <Button size="sm" onClick={() => handleRedeem(prize)} disabled={!canRedeem || isProcessing} className="!py-1.5 !px-3 shadow-none">
+                                    Riscatta
+                                </Button>
+                            </div>
                         </div>
                     );
                 })}
@@ -682,11 +713,6 @@ const CustomerManagement: React.FC<{onDataChange: () => void; showToast: (messag
             console.error("Failed to copy new credentials: ", err);
             showToast("Errore durante la copia.", 'error');
         }
-    };
-
-    const getUserDisplayName = (user: User) => {
-        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
-        return fullName ? `${fullName} (${user.username})` : user.username;
     };
 
     return (
